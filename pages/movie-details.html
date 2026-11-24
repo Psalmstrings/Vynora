@@ -168,7 +168,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <h4>PsalmStrings</h4>
+        <h4>Vynora</h4>
         <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
       </div>
       <div class="footer-col">
@@ -191,13 +191,13 @@
         <h5>Account</h5>
         <ul>
           <li><a href="./signin.html">Sign In</a></li>
-          <li><a href="./sigup.html">Create Account</a></li>
+          <li><a href="./signup.html">Create Account</a></li>
           <li><a href="./profile.html">Profile Settings</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
+      <p>&copy; 2025-2026 Vynora. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
     </div>
   </footer>
 
@@ -207,10 +207,10 @@
 
     document.addEventListener('DOMContentLoaded', async function () {
       // 1. Search Autocomplete
-      PsalmStrings.ui.initSearch('global-search-input', 'search-popup-results');
+      Vynora.ui.initSearch('global-search-input', 'search-popup-results');
 
       // 2. Carousel for similar movies
-      PsalmStrings.ui.setupCarousel('similar-movies-container', 'similar-slider-prev', 'similar-slider-next');
+      Vynora.ui.setupCarousel('similar-movies-container', 'similar-slider-prev', 'similar-slider-next');
 
       // 3. Extract movie ID
       const params = new URLSearchParams(window.location.search);
@@ -221,13 +221,13 @@
 
       // 4. Trailer button click
       document.getElementById('btn-open-trailer').addEventListener('click', function () {
-        PsalmStrings.ui.openTrailerModal(movieTrailerKey || 'zSWdZVtXT7E', currentMovie?.title);
+        Vynora.ui.openTrailerModal(movieTrailerKey || 'zSWdZVtXT7E', currentMovie?.title);
       });
     });
 
     async function loadMovie(id) {
-      currentMovie = await PsalmStrings.tmdbApi.getMovieDetails(id);
-      document.title = `${currentMovie.title || 'Movie'} - PsalmStrings`;
+      currentMovie = await Vynora.tmdbApi.getMovieDetails(id);
+      document.title = `${currentMovie.title || 'Movie'} - Vynora`;
 
       document.getElementById('detail-title').textContent = currentMovie.title;
       document.getElementById('detail-tagline').textContent = currentMovie.tagline || '';

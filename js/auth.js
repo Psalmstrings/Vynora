@@ -210,7 +210,7 @@ class AuthService {
       } else {
         const isPagesDir = window.location.pathname.includes('/pages/');
         const signinHref = isPagesDir ? './signin.html' : './pages/signin.html';
-        const signupHref = isPagesDir ? './sigup.html' : './pages/sigup.html';
+        const signupHref = isPagesDir ? './signup.html' : './pages/signup.html';
 
         container.innerHTML = `
           <div class="guest-nav-box">

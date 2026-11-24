@@ -898,21 +898,41 @@
             </div>
           `;
           const adminBtn = this.isAdmin() ? `
-            <a href="${adminHref}" class="btn-secondary-action" style="text-align:center; padding:10px; text-decoration:none; color:var(--color-gold); border-color:var(--color-gold);"><i class="fas fa-shield-alt"></i> Admin Dashboard</a>
+            <a href="${adminHref}" class="btn-drawer-signup" style="background:var(--bg-card); color:var(--color-gold) !important; border:1px solid var(--border-gold);"><i class="fas fa-shield-alt"></i> Admin Dashboard</a>
           ` : '';
           drawerFooter.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="mobile-drawer-user-actions">
               ${adminBtn}
-              <a href="${profileHref}" class="btn-primary" style="text-align:center; padding:10px; text-decoration:none;"><i class="fas fa-user-circle"></i> Edit Profile</a>
-              <button type="button" class="btn-ghost text-danger" style="text-align:center; padding:10px; width:100%; border:1px solid rgba(229,9,20,0.3); border-radius:var(--radius-sm); cursor:pointer;" onclick="PsalmStrings.auth.logout();"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+              <a href="${profileHref}" class="btn-drawer-profile"><i class="fas fa-user-circle"></i> Profile &amp; Preferences</a>
+              <button type="button" class="btn-drawer-pwa" onclick="Vynora.pwa.promptInstall();">
+                <i class="fas fa-download text-gold"></i> Install Vynora App
+              </button>
+              <button type="button" class="btn-drawer-logout" onclick="Vynora.auth.logout();"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
             </div>
           `;
         } else {
-          drawerAuth.innerHTML = ``;
+          drawerAuth.innerHTML = `
+            <div class="mobile-drawer-guest-card">
+              <div class="drawer-guest-crest">
+                <i class="fas fa-film text-gold"></i>
+              </div>
+              <div class="drawer-guest-text">
+                <strong>Welcome to Vynora</strong>
+                <small>4K trailers, custom picks &amp; community</small>
+              </div>
+            </div>
+          `;
           drawerFooter.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <a href="${signinHref}" class="btn-ghost" style="text-align:center; padding:10px; border-radius:var(--radius-sm); text-decoration:none; border:1px solid var(--border-subtle);">Sign In</a>
-              <a href="${signupHref}" class="btn-primary" style="text-align:center; padding:10px; border-radius:var(--radius-sm); text-decoration:none;">Get Started</a>
+            <div class="mobile-drawer-guest-actions">
+              <a href="${signupHref}" class="btn-drawer-signup">
+                <i class="fas fa-ticket-alt"></i> Get Started Free
+              </a>
+              <a href="${signinHref}" class="btn-drawer-signin">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+              </a>
+              <button type="button" class="btn-drawer-pwa" onclick="Vynora.pwa.promptInstall();">
+                <i class="fas fa-download text-gold"></i> Install Vynora App
+              </button>
             </div>
           `;
         }
@@ -1426,9 +1446,21 @@
         }, 280);
       });
 
+      // Mobile search expanding trigger
+      const searchBox = input.closest('.search-input-box');
+      if (searchBox) {
+        searchBox.addEventListener('click', () => {
+          searchBox.classList.add('expanded');
+          input.focus();
+        });
+      }
+
       document.addEventListener('click', (e) => {
         if (!input.contains(e.target) && !popup.contains(e.target)) {
           popup.style.display = 'none';
+          if (searchBox && !input.value.trim() && !e.target.closest('.search-input-box')) {
+            searchBox.classList.remove('expanded');
+          }
         }
       });
     },
@@ -1476,7 +1508,7 @@
       const movieTitle = options.title ? `for "${options.title}"` : '';
       const isPages = window.location.pathname.includes('/pages/');
       const signinHref = isPages ? './signin.html' : './pages/signin.html';
-      const signupHref = isPages ? './sigup.html' : './pages/sigup.html';
+      const signupHref = isPages ? './signup.html' : './pages/signup.html';
 
       let modal = document.getElementById('auth-required-modal');
       if (!modal) {
@@ -1828,6 +1860,17 @@
   // 9. PWA SERVICE WORKER & INSTALL PROMPT SERVICE
   const pwaService = {
     deferredPrompt: null,
+
+    isStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches ||
+             window.navigator.standalone === true ||
+             document.referrer.includes('android-app://');
+    },
+
+    isIOS() {
+      return /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()) && !window.MSStream;
+    },
+
     init() {
       // Register Service Worker
       if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
@@ -1849,6 +1892,9 @@
         e.preventDefault();
         this.deferredPrompt = e;
         this.renderInstallButton();
+        if (!sessionStorage.getItem('vynora_pwa_dismissed') && !this.isStandalone()) {
+          setTimeout(() => this.showInstallBanner(), 1500);
+        }
       });
 
       window.addEventListener('appinstalled', () => {
@@ -1856,22 +1902,141 @@
         console.log('Vynora PWA installed successfully.');
         const btn = document.getElementById('btn-pwa-install');
         if (btn) btn.style.display = 'none';
+        this.hideInstallBanner();
+      });
+
+      // Show banner after 2.5s on mobile/desktop if eligible
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          if (!this.isStandalone() && !sessionStorage.getItem('vynora_pwa_dismissed')) {
+            this.showInstallBanner();
+          }
+        }, 2500);
       });
     },
 
-    async promptInstall() {
-      if (!this.deferredPrompt) {
-        ui.showToast('To install Vynora, use "Add to Home Screen" or the install icon in your browser address bar.', 'info');
+    showInstallBanner() {
+      if (this.isStandalone() || sessionStorage.getItem('vynora_pwa_dismissed')) return;
+      let banner = document.getElementById('vynora-pwa-install-banner');
+      if (banner) {
+        banner.style.display = 'block';
         return;
       }
-      this.deferredPrompt.prompt();
-      const choice = await this.deferredPrompt.userChoice;
-      if (choice && choice.outcome === 'accepted') {
-        ui.showToast('Welcome to Vynora PWA!', 'success');
+
+      const isSub = window.location.pathname.includes('/pages/');
+      const iconSrc = isSub ? '../assets/icons/icon-192.png' : './assets/icons/icon-192.png';
+      const fallbackIcon = isSub ? '../assets/icons/logo.svg' : './assets/icons/logo.svg';
+
+      banner = document.createElement('div');
+      banner.id = 'vynora-pwa-install-banner';
+      banner.className = 'vynora-pwa-install-banner';
+      banner.setAttribute('role', 'dialog');
+      banner.setAttribute('aria-label', 'Install Vynora App');
+      banner.innerHTML = `
+        <div class="pwa-banner-inner">
+          <div class="pwa-banner-logo">
+            <img src="${iconSrc}" alt="Vynora" onerror="this.src='${fallbackIcon}'">
+          </div>
+          <div class="pwa-banner-text">
+            <h4>Install Vynora App</h4>
+            <p>Fast streaming, offline access & zero ads. Add to home screen.</p>
+          </div>
+          <div class="pwa-banner-actions">
+            <button class="btn-pwa-banner-install" id="btn-banner-install-act">
+              <i class="fas fa-download"></i> Install
+            </button>
+            <button class="btn-pwa-banner-dismiss" id="btn-banner-dismiss-act" aria-label="Close installation banner">&times;</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(banner);
+      banner.style.display = 'block';
+
+      const installBtn = document.getElementById('btn-banner-install-act');
+      if (installBtn) {
+        installBtn.addEventListener('click', () => {
+          this.promptInstall();
+        });
       }
-      this.deferredPrompt = null;
-      const btn = document.getElementById('btn-pwa-install');
-      if (btn) btn.style.display = 'none';
+
+      const dismissBtn = document.getElementById('btn-banner-dismiss-act');
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', () => {
+          this.hideInstallBanner();
+          sessionStorage.setItem('vynora_pwa_dismissed', '1');
+        });
+      }
+    },
+
+    hideInstallBanner() {
+      const banner = document.getElementById('vynora-pwa-install-banner');
+      if (banner) {
+        banner.style.display = 'none';
+      }
+    },
+
+    showIOSGuide() {
+      let modal = document.getElementById('vynora-ios-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        return;
+      }
+      modal = document.createElement('div');
+      modal.id = 'vynora-ios-modal';
+      modal.className = 'modal-backdrop';
+      modal.style.display = 'flex';
+      modal.innerHTML = `
+        <div class="modal-card ios-pwa-modal-card">
+          <h3 style="color:var(--color-gold);margin-bottom:12px;font-size:1.25rem;"><i class="fab fa-apple"></i> Install Vynora on iOS</h3>
+          <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:16px;">Install Vynora directly to your Home Screen for the full app experience:</p>
+          <div class="ios-step-box">
+            <div class="ios-step-icon"><i class="fas fa-share-square"></i></div>
+            <div>
+              <strong style="color:#fff;font-size:0.88rem;">1. Tap the Share button</strong>
+              <p style="margin:2px 0 0;font-size:0.78rem;color:var(--text-muted);">In Safari's bottom toolbar, tap the square share icon.</p>
+            </div>
+          </div>
+          <div class="ios-step-box">
+            <div class="ios-step-icon"><i class="fas fa-plus-square"></i></div>
+            <div>
+              <strong style="color:#fff;font-size:0.88rem;">2. Add to Home Screen</strong>
+              <p style="margin:2px 0 0;font-size:0.78rem;color:var(--text-muted);">Scroll down in the share sheet and tap <strong>"Add to Home Screen"</strong>.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:14px;" id="btn-close-ios-modal">Got it!</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      document.getElementById('btn-close-ios-modal').onclick = () => {
+        modal.style.display = 'none';
+      };
+      modal.onclick = (e) => {
+        if (e.target === modal) modal.style.display = 'none';
+      };
+    },
+
+    async promptInstall() {
+      if (this.deferredPrompt) {
+        this.deferredPrompt.prompt();
+        const choice = await this.deferredPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          ui.showToast('Welcome to Vynora PWA!', 'success');
+        }
+        this.deferredPrompt = null;
+        this.hideInstallBanner();
+        const btn = document.getElementById('btn-pwa-install');
+        if (btn) btn.style.display = 'none';
+        return;
+      }
+
+      if (this.isIOS()) {
+        this.showIOSGuide();
+        return;
+      }
+
+      // Fallback for browsers that don't support beforeinstallprompt or desktop
+      ui.showToast('To install Vynora, click "Install" or "Add to Home Screen" in your browser menu.', 'info', 4500);
     },
 
     renderInstallButton() {
