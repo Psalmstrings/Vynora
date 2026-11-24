@@ -468,6 +468,82 @@
       background: rgba(229, 9, 20, 0.2);
       border-color: #ff5252 !important;
     }
+
+    /* 100% Mobile Responsive Controls */
+    @media (max-width: 768px) {
+      .admin-navbar {
+        padding: 10px 16px;
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .admin-shell {
+        padding: 16px 12px 40px;
+      }
+      .admin-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .admin-tab-bar {
+        overflow-x: auto;
+        padding-bottom: 8px;
+        gap: 6px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .admin-tab-btn {
+        padding: 8px 14px;
+        font-size: 0.84rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .admin-card {
+        padding: 18px 14px;
+        margin-bottom: 20px;
+      }
+      .admin-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-nav-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .admin-user-pill {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+      }
+      .admin-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .traffic-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .traffic-label {
+        width: 100%;
+      }
+      .traffic-bar-bg {
+        width: 100%;
+      }
+      .btn-primary-action {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>

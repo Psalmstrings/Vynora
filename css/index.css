@@ -211,18 +211,62 @@
   }
 }
 
-@media (max-width: 600px) {
-  .features-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 768px) {
+  .landing-hero {
+    padding: 60px 16px 40px;
+    min-height: 480px;
   }
   .landing-title {
-    font-size: 2.2rem;
+    font-size: clamp(2rem, 7vw, 2.6rem);
+    line-height: 1.15;
   }
   .landing-desc {
-    font-size: 1rem;
+    font-size: 0.96rem;
+    margin-bottom: 24px;
+  }
+  .landing-cta-group {
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    gap: 10px;
+  }
+  .btn-landing-primary,
+  .btn-landing-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
   }
   .features-section,
   .landing-bottom-cta {
-    padding: 0 20px;
+    padding: 0 16px 40px;
+  }
+  .cta-banner-card {
+    padding: 36px 20px;
+  }
+  .cta-banner-card h2 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .landing-title {
+    font-size: 1.8rem;
+  }
+  .feature-card {
+    padding: 24px 18px;
+  }
+  .cta-banner-card {
+    padding: 28px 16px;
+  }
+  .cta-banner-card h2 {
+    font-size: 1.4rem;
+  }
+  .cta-banner-card p {
+    font-size: 0.9rem;
   }
 }

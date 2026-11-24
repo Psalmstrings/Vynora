@@ -198,11 +198,11 @@
   color: #000;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments (100% Mobile Ready) */
 @media (max-width: 992px) {
   .homepage-hero {
     height: 65vh;
-    padding: 0 20px;
+    padding: 0 24px;
   }
   .hero-movie-title {
     font-size: 2.5rem;
@@ -216,21 +216,72 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .homepage-hero {
-    height: 55vh;
-    min-height: 440px;
+    height: auto;
+    min-height: 480px;
+    padding: 50px 16px 36px;
+    background-position: center center;
+  }
+  .hero-inner {
+    max-width: 100%;
+  }
+  .hero-tagline-badge {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    margin-bottom: 12px;
   }
   .hero-movie-title {
-    font-size: 2rem;
+    font-size: clamp(1.8rem, 6.5vw, 2.5rem);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .hero-meta-row {
+    font-size: 0.85rem;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
   }
   .hero-movie-desc {
-    -webkit-line-clamp: 2;
-    font-size: 0.95rem;
+    -webkit-line-clamp: 3;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .genre-quick-bar {
+    padding: 12px 16px;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .genre-filter-pill {
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage-hero {
+    min-height: 420px;
+    padding: 36px 14px 28px;
+  }
+  .hero-buttons-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
   .btn-hero-play,
   .btn-hero-info {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 0.92rem;
+  }
+  .hero-movie-desc {
+    -webkit-line-clamp: 2;
     font-size: 0.88rem;
-    padding: 10px 18px;
+  }
+  .genre-filter-pill {
+    font-size: 0.76rem;
+    padding: 5px 12px;
   }
 }

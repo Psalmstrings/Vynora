@@ -1287,7 +1287,7 @@ button {
 }
 
 /* ==========================================================
-   RESPONSIVE QUERIES
+   RESPONSIVE QUERIES (100% Mobile Optimized)
    ========================================================== */
 @media (max-width: 992px) {
   .site-header {
@@ -1306,33 +1306,264 @@ button {
   }
   .footer-inner {
     grid-template-columns: 1fr 1fr;
+    gap: 32px;
   }
 }
 
 @media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .site-header {
+    padding: 0 16px;
+    height: 64px;
+  }
+
+  .header-left {
+    gap: 12px;
+  }
+
   .nav-links-main {
-    display: none;
+    display: none !important;
   }
+
   .hamburger-toggle {
-    display: flex;
+    display: flex !important;
   }
+
   .user-greeting {
-    display: none;
+    display: none !important;
   }
+
   .search-input-box {
-    width: 160px;
+    width: 140px;
+    padding: 5px 12px;
   }
+
   .search-input-box:focus-within {
-    width: 200px;
+    width: 190px;
   }
+
+  .search-input-box input {
+    font-size: 0.82rem;
+  }
+
+  .search-results-popup {
+    min-width: 280px;
+    max-width: 90vw;
+    right: 0;
+    left: auto;
+  }
+
+  .category-header {
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 12px;
+  }
+
+  .category-title {
+    font-size: 1.18rem;
+  }
+
+  .category-slider {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 12px;
+    scroll-padding-left: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .psalm-movie-card {
-    flex: 0 0 150px;
-    width: 150px;
+    flex: 0 0 140px;
+    width: 140px;
+    scroll-snap-align: start;
   }
+
+  .card-poster-wrapper {
+    height: 210px;
+  }
+
   .slider-nav-btn {
-    display: none;
+    display: none !important;
   }
+
   .footer-inner {
     grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 40px 16px 24px;
+  }
+
+  .footer-bottom {
+    padding: 18px 16px;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  /* Modals */
+  .psalm-modal-backdrop {
+    padding: 12px;
+  }
+
+  .psalm-modal-card {
+    width: 100% !important;
+    max-width: 480px !important;
+    margin: auto;
+    padding: 22px 18px !important;
+  }
+
+  .trailer-modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 8px !important;
+  }
+
+  .trailer-video-box {
+    aspect-ratio: 16 / 9;
+    height: auto !important;
+    width: 100% !important;
+    min-height: 200px;
+  }
+
+  /* Toast Notifications */
+  .psalm-toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+    align-items: center;
+  }
+
+  .psalm-toast {
+    width: 100%;
+    font-size: 0.88rem;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .site-header {
+    padding: 0 12px;
+    height: 60px;
+  }
+
+  .brand-logo-img {
+    height: 30px;
+    max-width: 130px;
+  }
+
+  .header-right {
+    gap: 8px;
+  }
+
+  .search-input-box {
+    width: 110px;
+    padding: 4px 8px;
+  }
+
+  .search-input-box:focus-within {
+    width: 160px;
+  }
+
+  .search-input-box i {
+    margin-right: 6px;
+    font-size: 0.8rem;
+  }
+
+  .search-input-box input::placeholder {
+    font-size: 0.78rem;
+  }
+
+  .btn-nav-signin {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .btn-nav-signup {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .btn-pwa-install {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+
+  .btn-pwa-install span {
+    display: none;
+  }
+
+  .hamburger-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .psalm-movie-card {
+    flex: 0 0 132px;
+    width: 132px;
+  }
+
+  .card-poster-wrapper {
+    height: 198px;
+  }
+
+  .card-title {
+    font-size: 0.84rem;
+  }
+
+  .card-meta-row {
+    font-size: 0.75rem;
+  }
+
+  .auth-gate-modal-card {
+    padding: 20px 14px !important;
+  }
+
+  .auth-gate-footer {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .auth-gate-footer .btn-ghost,
+  .auth-gate-footer .btn-primary {
+    width: 100% !important;
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand-logo-img {
+    height: 26px;
+    max-width: 110px;
+  }
+
+  .search-input-box {
+    width: 85px;
+    padding: 3px 6px;
+  }
+
+  .search-input-box:focus-within {
+    width: 140px;
+  }
+
+  .search-input-box input::placeholder {
+    display: none;
+  }
+
+  .psalm-movie-card {
+    flex: 0 0 120px;
+    width: 120px;
+  }
+
+  .card-poster-wrapper {
+    height: 180px;
+  }
+
+  .nav-avatar {
+    width: 28px !important;
+    height: 28px !important;
   }
 }

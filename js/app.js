@@ -830,9 +830,9 @@
       const homeHref = isPagesDir ? './homepage.html' : './pages/homepage.html';
       const listHref = isPagesDir ? './my-list.html' : './pages/my-list.html';
       const profileHref = isPagesDir ? './profile.html' : './pages/profile.html';
-      const signinHref = isPagesDir ? './signin.html' : './pages/signin.html';
-      const signupHref = isPagesDir ? './sigup.html' : './pages/sigup.html';
       const adminHref = isPagesDir ? './admin.html' : './pages/admin.html';
+      const signinHref = isPagesDir ? './signin.html' : './pages/signin.html';
+      const signupHref = isPagesDir ? './signup.html' : './pages/signup.html';
 
       containers.forEach(container => {
         if (this.currentUser) {
@@ -1609,6 +1609,9 @@
       const homeHref = isPagesDir ? './homepage.html' : './pages/homepage.html';
       const listHref = isPagesDir ? './my-list.html' : './pages/my-list.html';
       const profileHref = isPagesDir ? './profile.html' : './pages/profile.html';
+      const adminHref = isPagesDir ? './admin.html' : './pages/admin.html';
+      const signinHref = isPagesDir ? './signin.html' : './pages/signin.html';
+      const signupHref = isPagesDir ? './signup.html' : './pages/signup.html';
 
       // Ensure hamburger button exists in header-right
       let hamburger = header.querySelector('.hamburger-toggle');
@@ -1638,7 +1641,7 @@
         drawer.innerHTML = `
           <div class="mobile-drawer-header">
             <span style="font-weight: 800; font-size: 1.25rem; color: var(--color-gold); display:flex; align-items:center; gap:8px;">
-              <img src="${isSubDir ? '../' : './'}assets/icons/logo-header.svg" alt="Vynora" style="height:32px; width:auto; vertical-align:middle;">
+              <img src="${isPagesDir ? '../' : './'}assets/icons/logo-header.svg" alt="Vynora" style="height:32px; width:auto; vertical-align:middle;">
             </span>
             <button type="button" class="mobile-drawer-close" aria-label="Close menu">&times;</button>
           </div>
