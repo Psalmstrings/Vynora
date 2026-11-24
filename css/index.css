@@ -1,151 +1,228 @@
-* {  
-    margin: 0;  
-    padding: 0;  
-    box-sizing: border-box;  
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  
-}  
+/**
+ * PsalmStrings Landing Page Styles
+ */
 
-body {  
-    background-color: #141414;  
-    color: white;  
-}  
-
-/* Header Styles */  
-.header {  
-    background-color: #000000;  
-    padding: 20px 50px;  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-}  
-
-.logo {  
-    color:rgb(252, 210, 24);  
-    font-size: 2.5rem;  
-    font-weight: bold;  
-}  
-.nav-links button {  
-            padding: 10px;  
-            background: rgb(252, 210, 24);  
-            border: none;  
-            border-radius: 5px;  
-            font-size: 1.1rem;  
-            font-weight: bold;  
-            color: black;  
-            cursor: pointer;  
-        }  
-
-.nav-links a {  
-    color: white;  
-    text-decoration: none;  
-    margin-left: 30px;  
-    font-size: 1.1rem;  
-} 
-.signUp{
-    padding: 10px 100px;  
-    background: rgb(252, 210, 24);  
-    border: none;  
-    border-radius: 5px;  
-    font-size: 1.1rem;  
-    font-weight: bold;  
-    color: black;  
-    cursor: pointer;  
+.landing-hero {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px;
+  background-size: cover;
+  background-position: center;
+  background-image: linear-gradient(180deg, rgba(12, 13, 17, 0.7) 0%, rgba(12, 13, 17, 0.95) 100%),
+                    url('https://image.tmdb.org/t/p/original/s3TBrRGB1iav7gFOCNx3H31MoES.jpg');
 }
 
-/* Hero Section */  
-.hero {  
-    height: 100vh;  
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),  
-                url('../media/NG-en-20250324-TRIFECTA-perspective_4a8e8f5f-ae6a-4140-883b-0f6adfa9fbd6_small.png') center/cover;  
-    display: flex;  
-    align-items: center;  
-    padding: 0 50px;  
-}  
+.landing-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 840px;
+}
 
-.hero-content {  
-    max-width: 850px;  
-}  
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(252, 210, 24, 0.15);
+  border: 1px solid var(--border-gold);
+  color: var(--color-gold);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
 
-.hero-title {  
-    font-size: 4rem;  
-    margin-bottom: 20px;  
-}  
+.landing-title {
+  font-size: 3.8rem;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #fff;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
 
-.hero-description {  
-    font-size: 1.2rem;  
-    margin-bottom: 20px;  
-}  
+.landing-title span {
+  color: var(--color-gold);
+}
 
-/* Movie Rows */  
-.movie-row {  
-    padding: 20px 10px;  
-}  
+.landing-desc {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto 36px;
+}
 
-.row-title {  
-    font-size: 1.5rem;  
-    margin-bottom: 20px;  
-}  
+.landing-cta-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 
-.movies-container {  
-    display: flex;  
-    /* overflow-x: scroll;   */
-    overflow-x: auto;
-    /* padding: 20px 0; */
-    gap: 10px;  
-}  
+.btn-landing-primary {
+  background: var(--color-gold);
+  color: #000;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(252, 210, 24, 0.35);
+}
 
-.movie-card {  
-    min-width: 250px;  
-    /* height: 300px;   */
-    /* background: url('../media/Amber\ Heard\ Makes\ Her\ Acting\ Return\ in\ Intense\ Trailer\ for\ New\ Thriller\ \'In\ the\ Fire\'.jpg') center/cover;   */
-    border-radius: 5px;  
-    transition: transform 0.5s ease;  
-} 
-.movie-card img{
-    max-width: 100%;
-    max-height: 100%;
-} 
+.btn-landing-primary:hover {
+  background: var(--color-gold-hover);
+  transform: translateY(-2px);
+}
 
-.movie-card:hover {  
-    transform: scale(1.2);  
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2); 
-    cursor: pointer;  
-}  
-.movies-container::-webkit-scrollbar {  
-    display: none;  
-}  
+.btn-landing-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-subtle);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
 
-/* For other browsers */  
-.movies-container {  
-    scrollbar-width: none;  
-}  
+.btn-landing-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
-/* Responsive Design */  
-@media (max-width: 768px) {  
-    .header {  
-        padding: 20px;  
-        /* flex-direction: column;   */
-        gap: 20px;  
-    }  
-    .logo{
-        font-size: 22px;
-    }
-    .hero {  
-        padding: 0 20px;  
-    }  
+/* Features Grid */
+.features-section {
+  max-width: 1200px;
+  margin: 70px auto 40px;
+  padding: 0 40px;
+}
 
-    .hero-title {  
-        font-size: 2.5rem;  
-    }  
+.features-title-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
 
-    .movie-row {  
-        padding: 20px;  
-    }  
-}  
+.features-title-header h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
 
-/* Footer */  
-.footer {  
-    padding: 50px;  
-    text-align: center;  
-    background-color: #000000;  
-}  
+.features-title-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.feature-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 30px 24px;
+  transition: all 0.25s ease;
+}
+
+.feature-box:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-gold);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-icon-wrapper {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-md);
+  background: rgba(252, 210, 24, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-gold);
+  margin-bottom: 20px;
+}
+
+.feature-box h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.feature-box p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* CTA Bottom Card */
+.landing-bottom-cta {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 40px;
+}
+
+.cta-banner-card {
+  background: linear-gradient(135deg, #1f2029 0%, #15161c 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 50px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.cta-banner-card h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.cta-banner-card p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+@media (max-width: 992px) {
+  .features-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .landing-title {
+    font-size: 2.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  .landing-title {
+    font-size: 2.2rem;
+  }
+  .landing-desc {
+    font-size: 1rem;
+  }
+  .features-section,
+  .landing-bottom-cta {
+    padding: 0 20px;
+  }
+}

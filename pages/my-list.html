@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Library - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/my-list.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
+</head>
+<body>
+  <!-- Global Top Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="./homepage.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <nav class="nav-links-main">
+        <a href="./homepage.html">Home</a>
+        <a href="./homepage.html#trending">Trending</a>
+        <a href="./homepage.html#recommended">Recommended</a>
+        <a href="./my-list.html" class="active">My List</a>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search-input" placeholder="Search movies, cast, genres..." autocomplete="off" />
+        </div>
+        <div id="search-popup-results" class="search-results-popup"></div>
+      </div>
+
+      <!-- Auth State Container -->
+      <div class="header-auth-container"></div>
+    </div>
+  </header>
+
+  <main class="library-container">
+    <div class="library-header">
+      <div class="library-title-group">
+        <h1><i class="fas fa-bookmark text-gold"></i> My Movie Library</h1>
+        <p>Access your saved favourites, curate your watchlists, and organize your cinema universe.</p>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="library-tabs">
+        <button type="button" class="tab-btn active" id="tab-favourites-btn">
+          <i class="fas fa-heart text-danger"></i> Favourites
+          <span class="tab-badge" id="favourites-count">0</span>
+        </button>
+        <button type="button" class="tab-btn" id="tab-watchlist-btn">
+          <i class="fas fa-bookmark text-gold"></i> Watchlist
+          <span class="tab-badge" id="watchlist-count">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter and Sort Toolbar -->
+    <div class="library-toolbar">
+      <div class="library-filter-search">
+        <i class="fas fa-search text-muted"></i>
+        <input type="text" id="library-search-input" placeholder="Filter saved movies..." />
+      </div>
+
+      <div class="library-sort-wrapper">
+        <select id="library-sort-select" class="library-sort-select">
+          <option value="recent">Recently Added</option>
+          <option value="rating">Highest Rated</option>
+          <option value="title">Title (A - Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Movies Grid -->
+    <div class="library-movies-grid" id="library-grid"></div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>PsalmStrings</h4>
+        <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Discovery</h5>
+        <ul>
+          <li><a href="./homepage.html#trending">Trending Now</a></li>
+          <li><a href="./homepage.html#popular">Popular Movies</a></li>
+          <li><a href="./homepage.html#top-rated">Top Rated</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Library</h5>
+        <ul>
+          <li><a href="./my-list.html?tab=favourites">Favourites</a></li>
+          <li><a href="./my-list.html?tab=watchlist">Watchlist</a></li>
+          <li><a href="./profile.html">Genre Preferences</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <ul>
+          <li><a href="./signin.html">Sign In</a></li>
+          <li><a href="./sigup.html">Create Account</a></li>
+          <li><a href="./profile.html">Edit Profile</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Powered by Firebase.</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentTab = 'favourites';
+    let filterQuery = '';
+    let sortOrder = 'recent';
+
+    document.addEventListener('DOMContentLoaded', function () {
+      PsalmStrings.ui.initSearch('global-search-input', 'search-popup-results');
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('tab') === 'watchlist') {
+        currentTab = 'watchlist';
+      }
+
+      setupTabs();
+      setupFilters();
+
+      PsalmStrings.library.onLibraryChange(function () {
+        updateCounts();
+        renderGrid();
+      });
+    });
+
+    function setupTabs() {
+      const favBtn = document.getElementById('tab-favourites-btn');
+      const watchBtn = document.getElementById('tab-watchlist-btn');
+
+      favBtn.onclick = () => {
+        currentTab = 'favourites';
+        favBtn.classList.add('active');
+        watchBtn.classList.remove('active');
+        renderGrid();
+      };
+
+      watchBtn.onclick = () => {
+        currentTab = 'watchlist';
+        watchBtn.classList.add('active');
+        favBtn.classList.remove('active');
+        renderGrid();
+      };
+
+      if (currentTab === 'watchlist') {
+        watchBtn.click();
+      }
+    }
+
+    function setupFilters() {
+      const searchInput = document.getElementById('library-search-input');
+      const sortSelect = document.getElementById('library-sort-select');
+
+      searchInput.addEventListener('input', (e) => {
+        filterQuery = e.target.value.toLowerCase().trim();
+        renderGrid();
+      });
+
+      sortSelect.addEventListener('change', (e) => {
+        sortOrder = e.target.value;
+        renderGrid();
+      });
+    }
+
+    function updateCounts() {
+      document.getElementById('favourites-count').textContent = PsalmStrings.library.favourites.size;
+      document.getElementById('watchlist-count').textContent = PsalmStrings.library.watchlist.size;
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('library-grid');
+      let items = currentTab === 'favourites' 
+        ? Array.from(PsalmStrings.library.favourites.values())
+        : Array.from(PsalmStrings.library.watchlist.values());
+
+      if (filterQuery) {
+        items = items.filter(m => m.title && m.title.toLowerCase().includes(filterQuery));
+      }
+
+      if (sortOrder === 'title') {
+        items.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+      } else if (sortOrder === 'rating') {
+        items.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
+      }
+
+      grid.innerHTML = '';
+      if (!items.length) {
+        const isFav = currentTab === 'favourites';
+        grid.innerHTML = `
+          <div class="library-empty-state" style="grid-column: 1 / -1;">
+            <i class="${isFav ? 'far fa-heart' : 'far fa-bookmark'} empty-icon"></i>
+            <h3>No ${isFav ? 'Favourites' : 'Watchlist Titles'} Saved Yet</h3>
+            <p>${isFav ? "Click the heart icon on any movie to save your favourite blockbusters here." : "Save movies to watch later by clicking the bookmark icon on any title."}</p>
+            <a href="./homepage.html" class="btn-browse-cinema"><i class="fas fa-compass"></i> Discover Movies</a>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(movie => {
+        grid.appendChild(PsalmStrings.ui.createMovieCard(movie));
+      });
+    }
+  </script>
+</body>
+</html>

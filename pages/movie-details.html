@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Details - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/movie-details.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
+</head>
+<body>
+  <!-- Global Top Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="./homepage.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <nav class="nav-links-main">
+        <a href="./homepage.html">Home</a>
+        <a href="./homepage.html#trending">Trending</a>
+        <a href="./homepage.html#recommended">Recommended</a>
+        <a href="./my-list.html">My List</a>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search-input" placeholder="Search movies, cast, genres..." autocomplete="off" />
+        </div>
+        <div id="search-popup-results" class="search-results-popup"></div>
+      </div>
+
+      <!-- Auth State Container -->
+      <div class="header-auth-container"></div>
+    </div>
+  </header>
+
+  <!-- Main Details Page Content -->
+  <main id="movie-details-main">
+    <!-- Hero Details Section with Backdrop -->
+    <section class="details-hero" id="details-hero">
+      <div class="details-hero-content">
+        <div class="details-poster-box">
+          <img id="detail-poster" src="" alt="Movie Poster" />
+        </div>
+        <div class="details-info-box">
+          <div class="details-title-row">
+            <h1 class="details-title" id="detail-title">Loading Movie...</h1>
+            <p class="details-tagline" id="detail-tagline"></p>
+          </div>
+
+          <div class="details-badges">
+            <div class="badge-item badge-rating">
+              <i class="fas fa-star"></i>
+              <span id="detail-rating">--</span> / 10
+            </div>
+            <div class="badge-item">
+              <i class="far fa-calendar-alt"></i>
+              <span id="detail-release-year">--</span>
+            </div>
+            <div class="badge-item">
+              <i class="far fa-clock"></i>
+              <span id="detail-runtime">--</span>
+            </div>
+            <div class="details-genres" id="detail-genres-container"></div>
+          </div>
+
+          <p class="details-synopsis" id="detail-overview">
+            Fetching full movie synopsis, cast details, ratings, and video trailers...
+          </p>
+
+          <p class="details-director">
+            Director: <strong id="detail-director">--</strong>
+          </p>
+
+          <!-- Interactive Action Controls -->
+          <div class="details-actions-bar">
+            <button type="button" class="btn-trailer-play" id="btn-open-trailer">
+              <i class="fas fa-play"></i> Watch Trailer
+            </button>
+            <button type="button" class="btn-detail-action" id="btn-toggle-fav">
+              <i class="far fa-heart"></i> Add to Favourites
+            </button>
+            <button type="button" class="btn-detail-action" id="btn-toggle-watch">
+              <i class="far fa-bookmark"></i> Watchlist
+            </button>
+
+            <!-- Star Rating Widget -->
+            <div class="rating-widget-box" id="user-rating-widget">
+              <label>Your Rating:</label>
+              <div class="star-rating-stars" id="star-rating-container">
+                <i class="far fa-star" data-rating="2" title="2/10"></i>
+                <i class="far fa-star" data-rating="4" title="4/10"></i>
+                <i class="far fa-star" data-rating="6" title="6/10"></i>
+                <i class="far fa-star" data-rating="8" title="8/10"></i>
+                <i class="far fa-star" data-rating="10" title="10/10"></i>
+              </div>
+              <span id="user-rating-score" class="text-gold" style="font-weight: 700; font-size: 0.85rem;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cast & Crew -->
+    <section class="details-section-container">
+      <div class="section-title-bar">
+        <h3><i class="fas fa-users text-gold"></i> Top Cast</h3>
+      </div>
+      <div class="cast-grid" id="cast-container"></div>
+    </section>
+
+    <!-- Similar Movies Row -->
+    <section class="movie-category-section" style="max-width: 1200px; margin: 20px auto 0;">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-film text-gold"></i> Similar &amp; Recommended Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="similar-slider-prev"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="similar-movies-container"></div>
+        <button class="slider-nav-btn slider-nav-next" id="similar-slider-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- Movie Discussions & Comments Section -->
+    <section class="comments-section-wrapper" id="discussions-section">
+      <div class="comments-header-bar">
+        <h3>
+          <i class="fas fa-comments text-gold"></i> Community Discussions
+          <span class="comment-count-badge" id="total-comments-count">0</span>
+        </h3>
+      </div>
+
+      <!-- Add Comment Form Container -->
+      <div id="comment-form-container"></div>
+
+      <!-- Live Discussion Threads List -->
+      <div class="comments-list" id="comments-thread-list"></div>
+    </section>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>PsalmStrings</h4>
+        <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Discovery</h5>
+        <ul>
+          <li><a href="./homepage.html#trending">Trending Now</a></li>
+          <li><a href="./homepage.html#popular">Popular Movies</a></li>
+          <li><a href="./homepage.html#top-rated">Top Rated</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>My Library</h5>
+        <ul>
+          <li><a href="./my-list.html?tab=favourites">Favourites</a></li>
+          <li><a href="./my-list.html?tab=watchlist">Watchlist</a></li>
+          <li><a href="./profile.html">Genre Preferences</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <ul>
+          <li><a href="./signin.html">Sign In</a></li>
+          <li><a href="./sigup.html">Create Account</a></li>
+          <li><a href="./profile.html">Profile Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentMovie = null;
+    let movieTrailerKey = null;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      // 1. Search Autocomplete
+      PsalmStrings.ui.initSearch('global-search-input', 'search-popup-results');
+
+      // 2. Carousel for similar movies
+      PsalmStrings.ui.setupCarousel('similar-movies-container', 'similar-slider-prev', 'similar-slider-next');
+
+      // 3. Extract movie ID
+      const params = new URLSearchParams(window.location.search);
+      const movieId = params.get('id') || '157336';
+
+      await loadMovie(movieId);
+      initDiscussions(movieId);
+
+      // 4. Trailer button click
+      document.getElementById('btn-open-trailer').addEventListener('click', function () {
+        PsalmStrings.ui.openTrailerModal(movieTrailerKey || 'zSWdZVtXT7E', currentMovie?.title);
+      });
+    });
+
+    async function loadMovie(id) {
+      currentMovie = await PsalmStrings.tmdbApi.getMovieDetails(id);
+      document.title = `${currentMovie.title || 'Movie'} - PsalmStrings`;
+
+      document.getElementById('detail-title').textContent = currentMovie.title;
+      document.getElementById('detail-tagline').textContent = currentMovie.tagline || '';
+      document.getElementById('detail-overview').textContent = currentMovie.overview || 'No overview available.';
+      document.getElementById('detail-rating').textContent = currentMovie.vote_average ? Number(currentMovie.vote_average).toFixed(1) : 'NR';
+      document.getElementById('detail-release-year').textContent = currentMovie.release_date ? currentMovie.release_date.substring(0, 4) : 'N/A';
+
+      if (currentMovie.runtime) {
+        const h = Math.floor(currentMovie.runtime / 60);
+        const m = currentMovie.runtime % 60;
+        document.getElementById('detail-runtime').textContent = `${h}h ${m}m`;
+      } else {
+        document.getElementById('detail-runtime').textContent = '2h 15m';
+      }
+
+      document.getElementById('detail-director').textContent = currentMovie.director || 'Christopher Nolan';
+
+      const backdrop = PsalmStrings.tmdbApi.getBackdropUrl(currentMovie.backdrop_path);
+      const poster = PsalmStrings.tmdbApi.getImageUrl(currentMovie.poster_path, 'w500');
+      document.getElementById('details-hero').style.backgroundImage = `url('${backdrop}')`;
+      document.getElementById('detail-poster').src = poster;
+
+      // Genres
+      const genresBox = document.getElementById('detail-genres-container');
+      genresBox.innerHTML = (currentMovie.genres || []).map(g => `<span class="genre-pill">${g.name}</span>`).join('');
+
+      // Cast
+      const castBox = document.getElementById('cast-container');
+      const castList = currentMovie.credits?.cast || [];
+      if (castList.length) {
+        castBox.innerHTML = castList.slice(0, 10).map(c => `
+          <div class="cast-card">
+            <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://placehold.co/100x100/14151b/fcd218?text=Cast'}" alt="${c.name}" class="cast-photo" onerror="this.src='https://placehold.co/100x100/14151b/fcd218?text=Cast'">
+            <strong class="cast-name">${c.name}</strong>
+            <span class="cast-char">${c.character || 'Cast'}</span>
+          </div>
+        `).join('');
+      } else {
+        castBox.innerHTML = '<p class="text-muted">Cast details available upon live TMDB query.</p>';
+      }
+
+      // Similar movies
+      const similarBox = document.getElementById('similar-movies-container');
+      const similarList = currentMovie.similar?.results || currentMovie.recommendations?.results || [];
+      similarBox.innerHTML = '';
+      similarList.slice(0, 10).forEach(m => {
+        similarBox.appendChild(PsalmStrings.ui.createMovieCard(m));
+      });
+
+      movieTrailerKey = currentMovie.trailer_key || 'zSWdZVtXT7E';
+
+      // Setup Action Buttons
+      setupButtons(currentMovie);
+    }
+
+    function setupButtons(movie) {
+      const favBtn = document.getElementById('btn-toggle-fav');
+      const watchBtn = document.getElementById('btn-toggle-watch');
+
+      const updateUI = () => {
+        const isFav = PsalmStrings.library.isFavourite(movie.id);
+        const isWatch = PsalmStrings.library.isWatchlisted(movie.id);
+
+        favBtn.className = `btn-detail-action ${isFav ? 'active-fav' : ''}`;
+        favBtn.innerHTML = isFav 
+          ? '<i class="fas fa-heart text-danger"></i> Favourited' 
+          : '<i class="far fa-heart"></i> Add to Favourites';
+
+        watchBtn.className = `btn-detail-action ${isWatch ? 'active-watch' : ''}`;
+        watchBtn.innerHTML = isWatch 
+          ? '<i class="fas fa-bookmark text-gold"></i> On Watchlist' 
+          : '<i class="far fa-bookmark"></i> Watchlist';
+
+        // Stars
+        const rating = PsalmStrings.library.getUserRating(movie.id);
+        const ratingLabel = document.getElementById('user-rating-score');
+        document.querySelectorAll('#star-rating-container i').forEach(star => {
+          const val = Number(star.getAttribute('data-rating'));
+          star.className = (rating && val <= rating) ? 'fas fa-star filled' : 'far fa-star';
+        });
+        ratingLabel.textContent = rating ? `(${rating}/10)` : '';
+      };
+
+      updateUI();
+      PsalmStrings.library.onLibraryChange(updateUI);
+
+      favBtn.onclick = async () => {
+        const added = await PsalmStrings.library.toggleFavourite(movie);
+        PsalmStrings.ui.showToast(added ? 'Saved to Favourites!' : 'Removed from Favourites', 'success');
+      };
+
+      watchBtn.onclick = async () => {
+        const added = await PsalmStrings.library.toggleWatchlist(movie);
+        PsalmStrings.ui.showToast(added ? 'Added to Watchlist!' : 'Removed from Watchlist', 'success');
+      };
+
+      document.querySelectorAll('#star-rating-container i').forEach(star => {
+        star.onclick = async () => {
+          const val = Number(star.getAttribute('data-rating'));
+          await PsalmStrings.library.setRating(movie, val);
+          PsalmStrings.ui.showToast(`Rated ${val}/10! Added to your recommendation profile.`, 'success');
+        };
+      });
+    }
+
+    function initDiscussions(movieId) {
+      const formContainer = document.getElementById('comment-form-container');
+      const listContainer = document.getElementById('comments-thread-list');
+      const countEl = document.getElementById('total-comments-count');
+
+      // Update Form on Auth
+      PsalmStrings.auth.onAuth((user, profile) => {
+        const name = profile?.name || user?.displayName || 'Cinema Fan';
+        const avatar = profile?.avatarUrl || user?.photoURL || PsalmStrings.CONFIG.DEFAULT_AVATAR;
+
+        formContainer.innerHTML = `
+          <div class="comment-input-card">
+            <div class="comment-input-user">
+              <img src="${avatar}" alt="${name}">
+              <span>Posting as <strong>${name}</strong></span>
+            </div>
+            <textarea id="comment-text-input" class="comment-textarea" placeholder="Share your review, thoughts, or questions about this movie..."></textarea>
+            <div class="comment-input-footer">
+              <button type="button" class="btn-post-comment" id="btn-post-comment">
+                <i class="fas fa-paper-plane"></i> Post Comment
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('btn-post-comment').onclick = async () => {
+          const input = document.getElementById('comment-text-input');
+          const val = input.value.trim();
+          if (!val) return;
+          await PsalmStrings.comments.addComment(movieId, val);
+          input.value = '';
+          PsalmStrings.ui.showToast('Comment posted successfully!', 'success');
+        };
+      });
+
+      // Real-time subscribe to comments
+      PsalmStrings.comments.subscribeComments(movieId, (comments) => {
+        countEl.textContent = comments.length;
+        if (!comments.length) {
+          listContainer.innerHTML = `
+            <div class="text-muted" style="text-align: center; padding: 40px 0;">
+              <i class="far fa-comment-dots" style="font-size: 2.5rem; margin-bottom: 12px; display: block; color: var(--color-gold);"></i>
+              No reviews yet. Be the first to share your thoughts on this movie!
+            </div>
+          `;
+          return;
+        }
+
+        listContainer.innerHTML = '';
+        comments.forEach(c => {
+          const card = document.createElement('div');
+          card.className = 'comment-thread-card';
+          const isLiked = c.likes && c.likes[PsalmStrings.auth.currentUser?.uid || 'guest'];
+          const likeCount = c.likeCount || (c.likes ? Object.keys(c.likes).length : 0);
+
+          card.innerHTML = `
+            <div class="comment-main-header">
+              <div class="comment-author-info">
+                <img src="${c.userAvatar || PsalmStrings.CONFIG.DEFAULT_AVATAR}" alt="${c.userName}" class="comment-author-avatar">
+                <div class="comment-author-meta">
+                  <span class="comment-author-name">${c.userName}</span>
+                  <span class="comment-date">Just now</span>
+                </div>
+              </div>
+            </div>
+            <div class="comment-body-text">${c.text}</div>
+            <div class="comment-actions-row">
+              <button class="comment-action-btn btn-like ${isLiked ? 'liked' : ''}">
+                <i class="${isLiked ? 'fas fa-heart text-danger' : 'far fa-heart'}"></i>
+                <span>${likeCount}</span>
+              </button>
+              <button class="comment-action-btn btn-toggle-reply">
+                <i class="fas fa-reply"></i> Reply
+              </button>
+            </div>
+            <div class="reply-input-box" style="display: none;">
+              <textarea class="reply-textarea" placeholder="Write a reply..."></textarea>
+              <div class="reply-actions">
+                <button class="btn-cancel-reply">Cancel</button>
+                <button class="btn-submit-reply">Reply</button>
+              </div>
+            </div>
+            <div class="replies-container"></div>
+          `;
+
+          // Like
+          card.querySelector('.btn-like').onclick = async () => {
+            await PsalmStrings.comments.toggleLike(c.id, c.likes);
+          };
+
+          // Reply toggle
+          const replyBox = card.querySelector('.reply-input-box');
+          card.querySelector('.btn-toggle-reply').onclick = () => {
+            replyBox.style.display = replyBox.style.display === 'none' ? 'block' : 'none';
+          };
+          card.querySelector('.btn-cancel-reply').onclick = () => {
+            replyBox.style.display = 'none';
+          };
+          card.querySelector('.btn-submit-reply').onclick = async () => {
+            const txt = replyBox.querySelector('.reply-textarea').value.trim();
+            if (!txt) return;
+            await PsalmStrings.comments.addReply(c.id, movieId, txt);
+            replyBox.querySelector('.reply-textarea').value = '';
+            replyBox.style.display = 'none';
+            PsalmStrings.ui.showToast('Reply added!', 'success');
+          };
+
+          // Subscribe replies
+          const repliesBox = card.querySelector('.replies-container');
+          PsalmStrings.comments.subscribeReplies(c.id, (replies) => {
+            if (!replies.length) {
+              repliesBox.style.display = 'none';
+              return;
+            }
+            repliesBox.style.display = 'flex';
+            repliesBox.innerHTML = replies.map(r => `
+              <div class="reply-card">
+                <div class="reply-header">
+                  <div class="reply-author">
+                    <img src="${r.userAvatar || PsalmStrings.CONFIG.DEFAULT_AVATAR}" alt="${r.userName}" class="reply-avatar">
+                    <span class="reply-name">${r.userName}</span>
+                  </div>
+                </div>
+                <div class="reply-text">${r.text}</div>
+              </div>
+            `).join('');
+          });
+
+          listContainer.appendChild(card);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

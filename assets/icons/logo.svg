@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="vynoraBgGrad" cx="50%" cy="30%" r="70%" fx="50%" fy="30%">
+      <stop offset="0%" stop-color="#1B1C24" />
+      <stop offset="100%" stop-color="#08090C" />
+    </radialGradient>
+
+    <!-- Golden Wing Gradient (Left) -->
+    <linearGradient id="goldWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF2A3" />
+      <stop offset="35%" stop-color="#FCD218" />
+      <stop offset="85%" stop-color="#E5A812" />
+      <stop offset="100%" stop-color="#B87D00" />
+    </linearGradient>
+
+    <!-- Ruby-Amber Wing Gradient (Right) -->
+    <linearGradient id="rubyWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB347" />
+      <stop offset="40%" stop-color="#FF512F" />
+      <stop offset="85%" stop-color="#E50914" />
+      <stop offset="100%" stop-color="#9B0008" />
+    </linearGradient>
+
+    <!-- Play Beacon Core Gradient -->
+    <linearGradient id="coreBeaconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#FCD218" />
+      <stop offset="100%" stop-color="#FF9F1C" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Subtle Ambient Halo -->
+    <radialGradient id="ambientGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(252, 210, 24, 0.22)" />
+      <stop offset="65%" stop-color="rgba(229, 9, 20, 0.08)" />
+      <stop offset="100%" stop-color="rgba(0, 0, 0, 0)" />
+    </radialGradient>
+  </defs>
+
+  <!-- Squircle App Background -->
+  <rect width="512" height="512" rx="112" fill="url(#vynoraBgGrad)" />
+  <rect width="508" height="508" x="2" y="2" rx="110" fill="none" stroke="rgba(252, 210, 24, 0.25)" stroke-width="3" />
+
+  <!-- Ambient Light Emission Behind Logo -->
+  <circle cx="256" cy="256" r="190" fill="url(#ambientGlow)" />
+
+  <!-- Iconic Vynora Crest Group -->
+  <g transform="translate(0, 4)">
+    <!-- Ambient Depth Shadow -->
+    <path d="M 120 128 L 256 394 L 392 128 L 328 128 L 256 288 L 184 128 Z" fill="rgba(0,0,0,0.6)" filter="url(#goldGlow)" />
+
+    <!-- Left Wing (Golden Ascent) -->
+    <path d="M 112 136 C 112 124 122 116 134 116 L 202 116 C 212 116 220 122 225 131 L 256 220 L 220 286 L 158 148 L 118 148 C 114 148 112 142 112 136 Z" fill="url(#goldWingGrad)" />
+    <!-- Main Left Stem -->
+    <polygon points="176,132 256,380 216,380 136,150 176,132" fill="url(#goldWingGrad)" />
+
+    <!-- Right Wing (Ruby-Amber Cinema Flare) -->
+    <polygon points="336,132 256,380 296,380 376,150 336,132" fill="url(#rubyWingGrad)" />
+
+    <!-- Top Cap Right -->
+    <path d="M 400 136 C 400 124 390 116 378 116 L 310 116 C 300 116 292 122 287 131 L 256 220 L 292 286 L 354 148 L 394 148 C 398 148 400 142 400 136 Z" fill="url(#rubyWingGrad)" />
+
+    <!-- Central Diamond Play Core (Cinema Emblem) -->
+    <polygon points="256,192 288,248 256,304 224,248" fill="url(#coreBeaconGrad)" filter="url(#goldGlow)" opacity="0.95" />
+    <polygon points="256,204 280,248 256,292 232,248" fill="#FFFFFF" opacity="0.9" />
+
+    <!-- Sharp Bottom Apex Sparkle -->
+    <circle cx="256" cy="384" r="8" fill="#FFF2A3" />
+  </g>
+</svg>

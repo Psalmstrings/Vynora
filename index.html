@@ -1,112 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PsalmStrings - Your Personal Movie Guide</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="./css/index.css">
-    <link rel="shortcut icon" href="./media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon">
-  </head>
-  <body>
-    <header class="header">
-      <div class="logo">PsalmStrings</div>
-      <nav class="nav-links">
-        <a href="./pages/signin.html"><button>Sign In</button></a>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PsalmStrings - Discover, Recommend & Discuss Movies</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="./css/common.css" />
+  <link rel="stylesheet" href="./css/index.css" />
+  <link rel="shortcut icon" href="./media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
 
-    <section class="hero">
-      <div class="hero-content">
-        <h1 class="hero-title">Welcome to PsalmStrings</h1>
-        <p class="hero-description">
-          Watch the latest blockbusters and create your personalize Watchlist.
-        </p>
-        <a href="./pages/sigup.html">
-          <button class="signUp">Get Started</button>
+  <!-- Firebase Compat SDK (Compatible with file:// and http/https) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="./js/app.js"></script>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="./index.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <nav class="nav-links-main">
+        <a href="./pages/homepage.html">Explore Movies</a>
+        <a href="#trending-section">Trending Now</a>
+        <a href="#features-section">Platform Features</a>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="landing-search-input" placeholder="Search movies, cast, genres..." autocomplete="off" />
+        </div>
+        <div id="landing-search-results" class="search-results-popup"></div>
+      </div>
+
+      <!-- Auth State Container -->
+      <div class="header-auth-container">
+        <div class="guest-nav-box">
+          <a href="./pages/signin.html" class="btn-nav-signin">Sign In</a>
+          <a href="./pages/sigup.html" class="btn-nav-signup">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="landing-hero">
+    <div class="landing-hero-content">
+      <span class="landing-badge">
+        <i class="fas fa-sparkles"></i> Intelligent Movie Discovery &amp; Community
+      </span>
+      <h1 class="landing-title">
+        The Ultimate Guide to <span>Cinema You'll Love.</span>
+      </h1>
+      <p class="landing-desc">
+        Discover trending blockbusters, explore explainable recommendations matched to your taste, save your personal watchlist, and engage in real-time movie discussions.
+      </p>
+      <div class="landing-cta-group">
+        <a href="./pages/homepage.html" class="btn-landing-primary">
+          <i class="fas fa-compass"></i> Discover Movies Now
+        </a>
+        <a href="./pages/sigup.html" class="btn-landing-secondary">
+          <i class="fas fa-user-plus"></i> Create Free Account
         </a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <main>
-      <section class="movie-row">
-        <h2 class="row-title">Trending Now</h2>
-        <div class="movies-container">
-          <div class="movie-card">
-            <img
-              src="./media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-              alt=""
-            />
-          </div>
-          <div class="movie-card">
-            <img
-              src="./media/AAAABfSjV_WrYEkA6aMtwGRknqc0jbBP-w5FEQjR3b0r2iC8C7rtoSajJlZdpLrCiEP2yCD6jBOD2QoAXDp7hG6dd1-3eePqkkb9W8o.png"
-              alt=""
-            />
-          </div>
-          <div class="movie-card">
-            <img
-              src="./media/AAAABe-v06pN0a79Ly1CB3Xy69ySKauhnBKtisgukrcDAVCPDGhJEx1xg8cKTrFhUVtexFAQEVVE32WiKw5PjkTLJeBmdBEI0TnZhPk.png"
-              alt=""
-            />
-          </div>
-          <div
-            class="movie-card"
-            style="background-image: url('trending3.jpg')"
-          >
-            <img
-              src="./media/AAAABe3Y7aYMZTkJrHCP4U9I6raI1II6d62iamdF2I7jJ1KX3usCpveOqrfhX6o0JQ6UyBbYRvFvCqCjQTEdVcV4TTRYiMUDRjJ0PT0.png"
-              alt=""
-            />
-          </div>
-          <div
-            class="movie-card"
-            style="background-image: url('trending3.jpg')"
-          >
-            <img
-              src="./media/AAAABfuBxwODJWGpnxkkB_o4u6261-94UU3qXviCR10RUPHt_t2aUmLdxZSf9Ya1QPVE-RSGPIFap0ktl5E9IzJCdmOleGJlBtkgbJ9w5m7dY_HIg34-vtCLyJn7oD0YolAl8jOJ.png"
-              alt=""
-            />
-          </div>
-          <div
-            class="movie-card"
-            style="background-image: url('trending3.jpg')"
-          >
-            <img
-              src="./media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-              alt=""
-            />
-          </div>
-          <div
-            class="movie-card"
-            style="background-image: url('trending3.jpg')"
-          >
-            <img
-              src="./media/AAAABQI4nvvc7cBSIEzeLz1Tzo7j2c1RGppVHJVfKsfChmmtpn3dXpUgWG9SWK47luyU2--bwJhqgyWMfIsqKOivZvxVC8b1z-HEKhhF_8i8MPe9eYwaNxw04_geHILcsaDe_xZJTzW8Ru40-NVX2Eq1iMVa6PV9sMBYr5Q.png"
-              alt=""
-            />
-          </div>
+  <!-- Live Trending Preview Carousel -->
+  <section class="movie-category-section" id="trending-section" style="margin-top: 20px;">
+    <div class="category-header">
+      <h3 class="category-title">
+        <i class="fas fa-fire text-gold"></i> Trending This Week
+      </h3>
+      <a href="./pages/homepage.html" style="color: var(--color-gold); font-size: 0.9rem; font-weight: 700;">
+        Explore All &rarr;
+      </a>
+    </div>
+    <div class="category-slider-wrapper">
+      <button class="slider-nav-btn slider-nav-prev" id="btn-prev-landing-trending"><i class="fas fa-chevron-left"></i></button>
+      <div class="category-slider" id="landing-trending-slider"></div>
+      <button class="slider-nav-btn slider-nav-next" id="btn-next-landing-trending"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- Platform Features Grid -->
+  <section class="features-section" id="features-section">
+    <div class="features-title-header">
+      <h2>Engineered for Movie Enthusiasts</h2>
+      <p>Everything you need for a modern, intelligent cinema discovery experience.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-wand-magic-sparkles"></i>
         </div>
-      </section>
-    </main>
+        <h3>Explainable Recommendations</h3>
+        <p>No black-box mystery. Our engine transparently matches titles based on your preferred genres, ratings, and saved favourites.</p>
+      </div>
 
-    <footer class="footer">
-      <p>© 2025 PsalmStrings. All rights reserved.</p>
-    </footer>
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-comments"></i>
+        </div>
+        <h3>Real-Time Discussions</h3>
+        <p>Threaded review forums on every movie details page. Reply to discussions, like reviews, and share cinematic viewpoints.</p>
+      </div>
 
-    <script>
-      // Add smooth scrolling behavior
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
-          e.preventDefault();
-          document.querySelector(this.getAttribute("href")).scrollIntoView({
-            behavior: "smooth",
-          });
-        });
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-bookmark"></i>
+        </div>
+        <h3>Cloud Watchlists</h3>
+        <p>Powered by Firebase Firestore. Save favourites and organize watchlists with instantaneous synchronization across all devices.</p>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-film"></i>
+        </div>
+        <h3>Rich Media &amp; 4K Trailers</h3>
+        <p>Dive deep into movie details with high-resolution backdrops, cast directories, director information, and official trailers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Call to Action -->
+  <section class="landing-bottom-cta">
+    <div class="cta-banner-card">
+      <h2>Ready to Start Your Cinema Journey?</h2>
+      <p>Join our community of movie lovers today. Create your account in seconds and unlock personalized recommendations.</p>
+      <div class="landing-cta-group">
+        <a href="./pages/sigup.html" class="btn-landing-primary">
+          <i class="fas fa-ticket-alt"></i> Join PsalmStrings Free
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>PsalmStrings</h4>
+        <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="./pages/homepage.html#trending">Trending Blockbusters</a></li>
+          <li><a href="./pages/homepage.html#popular">Popular Releases</a></li>
+          <li><a href="./pages/homepage.html#top-rated">Top Rated of All Time</a></li>
+          <li><a href="./pages/homepage.html#recommended">Personalized Picks</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>My Library</h5>
+        <ul>
+          <li><a href="./pages/my-list.html?tab=favourites">My Favourites</a></li>
+          <li><a href="./pages/my-list.html?tab=watchlist">My Watchlist</a></li>
+          <li><a href="./pages/profile.html">Genre Preferences</a></li>
+          <li><a href="./pages/admin-login.html"><i class="fas fa-lock" style="font-size:0.75rem;"></i> Admin Portal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <ul>
+          <li><a href="./pages/signin.html">Sign In</a></li>
+          <li><a href="./pages/sigup.html">Create Free Account</a></li>
+          <li><a href="./pages/profile.html">Profile Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
+      <p>Built with vanilla web technologies (HTML5, CSS3, Vanilla JS).</p>
+    </div>
+  </footer>
+
+  <!-- Script Initialization -->
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // 1. Search Autocomplete
+      PsalmStrings.ui.initSearch('landing-search-input', 'landing-search-results');
+
+      // 2. Carousel navigation
+      PsalmStrings.ui.setupCarousel('landing-trending-slider', 'btn-prev-landing-trending', 'btn-next-landing-trending');
+
+      // 3. Load Trending Movies
+      const slider = document.getElementById('landing-trending-slider');
+      const movies = await PsalmStrings.tmdbApi.getTrending('week');
+      slider.innerHTML = '';
+      movies.forEach(function (m) {
+        slider.appendChild(PsalmStrings.ui.createMovieCard(m));
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>

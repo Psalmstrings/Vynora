@@ -1,386 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - PsalmStrings</title>
-    <link rel="stylesheet" href="../css/profile.css">
-    <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile &amp; Preferences - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/profile.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">PsalmStrings</div>
-        <div class="hamburger">☰</div>
-        <div class="right-side">
-            <input type="text" class="search-bar" placeholder="Search">
-            <nav class="nav-links">
-                <a href="./homepage.html">Home</a>
-                <a href="./my list.html">My List</a>
-                <div class="profile-dropdown">
-                    <a href="#" class="profile-link">Profile</a>
-                    <div class="dropdown-content">
-                        <a href="profile.html">Profile</a>
-                        <a href="settings.html">Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" id="logout-btn" class="logout-link">Logout</a>
-                    </div>
-                </div>
-            </nav>
-           
-        </div>
-    </header>
-
-    <div class="profile-container">
-        <div class="profile-layout">
-            <!-- User Info Card -->
-            <div class="user-info-card">
-                <div class="user-details">
-                    <div class="user-detail">
-                        <label>Full Name</label>
-                        <p id="display-fullname">Loading...</p>
-                    </div>
-                    <div class="user-detail">
-                        <label>Email</label>
-                        <p id="display-email">Loading...</p>
-                    </div>
-                    <div class="user-detail">
-                        <label>Username</label>
-                        <p id="display-username">Loading...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Form -->
-            <div class="profile-form-container">
-                <h1>Edit Profile</h1>
-                
-                <form id="profile-form">
-                    <div class="form-group">
-                        <label for="full-name">Full Name</label>
-                        <input type="text" id="full-name" name="full-name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Preferred Movie Genres (Select up to 5)</label>
-                        <div class="genre-selection">
-                            <div class="genre-option">
-                                <input type="checkbox" id="action" name="genres" value="Action">
-                                <label for="action">Action</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="comedy" name="genres" value="Comedy">
-                                <label for="comedy">Comedy</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="drama" name="genres" value="Drama">
-                                <label for="drama">Drama</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="horror" name="genres" value="Horror">
-                                <label for="horror">Horror</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="sci-fi" name="genres" value="Sci-Fi">
-                                <label for="sci-fi">Sci-Fi</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="romance" name="genres" value="Romance">
-                                <label for="romance">Romance</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="thriller" name="genres" value="Thriller">
-                                <label for="thriller">Thriller</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="animation" name="genres" value="Animation">
-                                <label for="animation">Animation</label>
-                            </div>
-                            <div class="genre-option">
-                                <input type="checkbox" id="documentary" name="genres" value="Documentary">
-                                <label for="documentary">Documentary</label>
-                            </div>
-                        </div>
-                        <p class="genre-counter">0/5 genres selected</p>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" id="cancel-btn">Cancel</button>
-                        <button type="submit" id="save-btn">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+  <!-- Top Navigation Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="./homepage.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <nav class="nav-links-main">
+        <a href="./homepage.html">Home</a>
+        <a href="./homepage.html#trending">Trending</a>
+        <a href="./homepage.html#recommended">Recommended</a>
+        <a href="./my-list.html">My List</a>
+      </nav>
     </div>
 
-    <div class="footer">
-        <p>&copy; 2025 Psalm Strings. All rights reserved.</p>
-        <p>Terms of Use | Privacy Policy</p>
+    <div class="header-right">
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search-input" placeholder="Search movies, cast, genres..." autocomplete="off" />
+        </div>
+        <div id="search-popup-results" class="search-results-popup"></div>
+      </div>
+
+      <!-- Auth State Container -->
+      <div class="header-auth-container"></div>
+    </div>
+  </header>
+
+  <main class="profile-page-container">
+    <!-- Top Header Card -->
+    <div class="profile-card-header">
+      <img id="profile-banner-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="profile-header-avatar" />
+      <div class="profile-header-info">
+        <h2 id="profile-banner-name">Cinema Fan</h2>
+        <p id="profile-banner-email">Manage your movie tastes &amp; account settings</p>
+      </div>
     </div>
 
+    <!-- Stats Grid -->
+    <div class="profile-stats-grid">
+      <div class="stat-box">
+        <div class="stat-number" id="stat-favs">0</div>
+        <div class="stat-label">Saved Favourites</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-watch">0</div>
+        <div class="stat-label">Watchlist Titles</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-rates">0</div>
+        <div class="stat-label">Movies Rated</div>
+      </div>
+    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc,
-            setDoc,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5kROT39vzmZztR4k2BzYSL3PFlio1tUM",
-            authDomain: "psalmstrings-7b9a9.firebaseapp.com",
-            projectId: "psalmstrings-7b9a9",
-            storageBucket: "psalmstrings-7b9a9.appspot.com",
-            messagingSenderId: "765832868823",
-            appId: "1:765832868823:web:0dd6e79ee4d3acde041192",
-            measurementId: "G-LV8DV0TC8E"
+    <form id="profile-form">
+      <!-- Avatar Selection -->
+      <div class="profile-section-card">
+        <h3><i class="fas fa-camera text-gold"></i> Choose Your Cinema Avatar</h3>
+        <p class="section-sub">Select one of our character presets or provide a custom image URL.</p>
+
+        <div class="avatar-presets-grid" id="avatar-presets-grid"></div>
+
+        <div class="form-group-item" style="margin-top: 14px;">
+          <label for="custom-avatar-url">Or Custom Photo URL:</label>
+          <input type="url" id="custom-avatar-url" placeholder="https://example.com/avatar.jpg" />
+        </div>
+      </div>
+
+      <!-- Personal Info -->
+      <div class="profile-section-card">
+        <h3><i class="fas fa-user-edit text-gold"></i> Personal Information</h3>
+        <p class="section-sub">Update your public display name.</p>
+
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label for="profile-name">Display Name</label>
+            <input type="text" id="profile-name" required />
+          </div>
+          <div class="form-group-item">
+            <label for="profile-email">Email Address</label>
+            <input type="email" id="profile-email" readonly />
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferred Genres -->
+      <div class="profile-section-card">
+        <h3><i class="fas fa-heart text-gold"></i> Movie Taste &amp; Preferred Genres</h3>
+        <p class="section-sub">Select your favourite genres. Our recommendation engine uses these to curate your personal rows!</p>
+
+        <div class="genres-selector-grid" id="genres-selector-grid"></div>
+      </div>
+
+      <!-- Password Reset -->
+      <div class="profile-section-card">
+        <h3><i class="fas fa-shield-alt text-gold"></i> Account Security</h3>
+        <p class="section-sub">Send an official Firebase password reset link to your registered email.</p>
+        <button type="button" class="btn-secondary-action" id="btn-profile-pwd-reset">
+          <i class="fas fa-envelope"></i> Send Password Reset Link
+        </button>
+      </div>
+
+      <div class="profile-actions-bar">
+        <a href="./homepage.html" class="btn-secondary-action">Back to Discover</a>
+        <button type="submit" class="btn-primary-action" id="btn-save-profile">
+          <i class="fas fa-save"></i> Save Profile Changes
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>PsalmStrings</h4>
+        <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Discovery</h5>
+        <ul>
+          <li><a href="./homepage.html#trending">Trending Now</a></li>
+          <li><a href="./homepage.html#popular">Popular Movies</a></li>
+          <li><a href="./homepage.html#recommended">Recommended</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>My Library</h5>
+        <ul>
+          <li><a href="./my-list.html?tab=favourites">Favourites</a></li>
+          <li><a href="./my-list.html?tab=watchlist">Watchlist</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Account</h5>
+        <ul>
+          <li><a href="./signin.html">Sign In</a></li>
+          <li><a href="./sigup.html">Create Account</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025-2026 PsalmStrings. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let selectedAvatar = PsalmStrings.CONFIG.DEFAULT_AVATAR;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      PsalmStrings.ui.initSearch('global-search-input', 'search-popup-results');
+
+      // Populate Avatar Presets
+      const avatarGrid = document.getElementById('avatar-presets-grid');
+      avatarGrid.innerHTML = PsalmStrings.CONFIG.AVATARS.map((p, i) => `
+        <div class="avatar-preset-item ${i === 0 ? 'selected' : ''}" data-url="${p.url}" title="${p.name}">
+          <img src="${p.url}" alt="${p.name}">
+        </div>
+      `).join('');
+
+      avatarGrid.querySelectorAll('.avatar-preset-item').forEach(item => {
+        item.onclick = () => {
+          avatarGrid.querySelectorAll('.avatar-preset-item').forEach(x => x.classList.remove('selected'));
+          item.classList.add('selected');
+          selectedAvatar = item.getAttribute('data-url');
+          document.getElementById('profile-banner-avatar').src = selectedAvatar;
+          document.getElementById('custom-avatar-url').value = '';
         };
-    
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-    
-        // DOM elements
-        const profileForm = document.getElementById('profile-form');
-        const fullNameInput = document.getElementById('full-name');
-        const emailInput = document.getElementById('email');
-        const usernameInput = document.getElementById('username');
-        const genreCheckboxes = document.querySelectorAll('input[name="genres"]');
-        const genreCounter = document.querySelector('.genre-counter');
-        const logoutBtn = document.getElementById('logout-btn');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const displayFullname = document.getElementById('display-fullname');
-        const displayEmail = document.getElementById('display-email');
-        const displayUsername = document.getElementById('display-username');
-    
-        // Maximum number of selectable genres
-        const MAX_GENRES = 5;
-        let selectedGenres = [];
-    
-        // Load user data when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUserData();
-        });
-    
-        // Load user data from Firestore
-        async function loadUserData() {
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = '/auth/login.html';
-                    return;
-                }
-    
-                // Set email from auth
-                emailInput.value = user.email;
-                displayEmail.textContent = user.email;
-    
-                // Get user profile from Firestore
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-    
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    
-                    // Set name from "name" field in Firestore
-                    const name = userData.name || '';
-                    fullNameInput.value = name;
-                    displayFullname.textContent = name;
-                    
-                    // Set username
-                    usernameInput.value = userData.username || '';
-                    displayUsername.textContent = userData.username || 'Not set';
-                    
-                    // Set selected genres - initialize empty array if not exists
-                    selectedGenres = userData.genres || [];
-                    updateGenreSelection();
-                } else {
-                    // Initialize new user document if it doesn't exist
-                    await setDoc(userRef, {
-                        name: '', // Initialize empty name field
-                        email: user.email,
-                        createdAt: serverTimestamp(),
-                        genres: [] // Initialize empty genres array
-                    });
-                }
-            });
-        }
-    
-        // Update genre selection UI
-        function updateGenreSelection() {
-            // Update checkboxes
-            genreCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectedGenres.includes(checkbox.value);
-            });
-            
-            // Update counter
-            genreCounter.textContent = `${selectedGenres.length}/${MAX_GENRES} genres selected`;
-            
-            // Disable unchecked boxes if max reached
-            if (selectedGenres.length >= MAX_GENRES) {
-                genreCheckboxes.forEach(checkbox => {
-                    if (!checkbox.checked) {
-                        checkbox.disabled = true;
-                    }
-                });
-            } else {
-                genreCheckboxes.forEach(checkbox => {
-                    checkbox.disabled = false;
-                });
-            }
-        }
-    
-        // Handle genre selection
-        genreCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    if (selectedGenres.length < MAX_GENRES) {
-                        selectedGenres.push(e.target.value);
-                    } else {
-                        e.target.checked = false;
-                        return;
-                    }
-                } else {
-                    selectedGenres = selectedGenres.filter(genre => genre !== e.target.value);
-                }
-                
-                updateGenreSelection();
-            });
-        });
-    
-        // Save profile data
-        profileForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const user = auth.currentUser;
-            if (!user) return;
-    
-            // Disable save button during processing
-            const saveBtn = document.getElementById('save-btn');
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Saving...';
-    
-            try {
-                const userRef = doc(db, "users", user.uid);
-                
-                // Prepare data to save
-                const userData = {
-                    name: fullNameInput.value.trim(), // Save as "name" field
-                    username: usernameInput.value.trim(),
-                    genres: selectedGenres,
-                    lastUpdated: serverTimestamp(),
-                    email: user.email // Ensure email is always included
-                };
-                
-                // Save to Firestore
-                await setDoc(userRef, userData, { merge: true });
-    
-                // Update display in user info card
-                displayFullname.textContent = userData.name;
-                displayUsername.textContent = userData.username;
-                
-                showToast('Profile updated successfully!');
-            } catch (error) {
-                console.error("Error updating profile:", error);
-                showToast('Failed to update profile', true);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = 'Save Changes';
-            }
-        });
-    
-        // Cancel button - reset form to saved values
-        cancelBtn.addEventListener('click', () => {
-            loadUserData();
-            showToast('Changes discarded');
-        });
-    
-        // Logout button
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            try {
-                await signOut(auth);
-                window.location.href = '../index.html';
-            } catch (error) {
-                console.error("Error signing out:", error);
-                showToast('Failed to logout', true);
-            }
-        });
-    
-        // Show toast notification
-        function showToast(message, isError = false) {
-            const toast = document.createElement('div');
-            toast.textContent = message;
-            toast.style.position = 'fixed';
-            toast.style.bottom = '20px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.padding = '12px 24px';
-            toast.style.backgroundColor = isError ? '#f44336' : '#4CAF50';
-            toast.style.color = 'white';
-            toast.style.borderRadius = '4px';
-            toast.style.zIndex = '1000';
-            toast.style.transition = 'opacity 0.5s';
-            document.body.appendChild(toast);
-    
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
-        }
+      });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.querySelector('.hamburger');
-            const rightSide = document.querySelector('.right-side');
-            
-            // Toggle menu when hamburger is clicked
-            hamburger.addEventListener('click', function() {
-                rightSide.classList.toggle('active');
-            });
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.hamburger') && !event.target.closest('.right-side')) {
-                    rightSide.classList.remove('active');
-                }
-            });
-            
-            // Close menu when a nav link is clicked (optional)
-            const navLinks = document.querySelectorAll('.nav-links a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        rightSide.classList.remove('active');
-                    }
-                });
-            });
-            
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    rightSide.classList.remove('active');
-                }
-            });
+      document.getElementById('custom-avatar-url').addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (val) {
+          selectedAvatar = val;
+          document.getElementById('profile-banner-avatar').src = selectedAvatar;
+          avatarGrid.querySelectorAll('.avatar-preset-item').forEach(x => x.classList.remove('selected'));
+        }
+      });
+
+      // Populate Genres
+      const genresGrid = document.getElementById('genres-selector-grid');
+      const uniqueNames = Array.from(new Set(Object.values(PsalmStrings.CONFIG.GENRES)));
+      genresGrid.innerHTML = uniqueNames.map(g => `
+        <label class="genre-check-badge">
+          <input type="checkbox" value="${g}">
+          <span>${g}</span>
+        </label>
+      `).join('');
+
+      genresGrid.addEventListener('change', (e) => {
+        if (e.target.matches('input[type="checkbox"]')) {
+          e.target.closest('.genre-check-badge').classList.toggle('active', e.target.checked);
+        }
+      });
+
+      // Password Reset
+      document.getElementById('btn-profile-pwd-reset').onclick = async () => {
+        const email = PsalmStrings.auth.currentUser?.email;
+        if (!email) {
+          PsalmStrings.ui.showToast('No email associated with current session.', 'error');
+          return;
+        }
+        try {
+          await PsalmStrings.auth.sendPasswordReset(email);
+          PsalmStrings.ui.showToast('Password reset link sent to ' + email, 'success');
+        } catch (e) {
+          PsalmStrings.ui.showToast(e.message, 'error');
+        }
+      };
+
+      // Stats
+      PsalmStrings.library.onLibraryChange((lib) => {
+        document.getElementById('stat-favs').textContent = lib.favourites.length;
+        document.getElementById('stat-watch').textContent = lib.watchlist.length;
+        document.getElementById('stat-rates').textContent = lib.ratings.length;
+      });
+
+      // Populate User Data
+      PsalmStrings.auth.onAuth((user, profile) => {
+        const name = profile?.name || user?.displayName || 'Movie Fan';
+        const email = user?.email || 'guest@psalmstrings.com';
+        const avatar = profile?.avatarUrl || user?.photoURL || PsalmStrings.CONFIG.DEFAULT_AVATAR;
+        const genres = profile?.genres || ['Action', 'Science Fiction'];
+
+        document.getElementById('profile-banner-name').textContent = name;
+        document.getElementById('profile-banner-email').textContent = email;
+        document.getElementById('profile-banner-avatar').src = avatar;
+
+        document.getElementById('profile-name').value = name;
+        document.getElementById('profile-email').value = email;
+
+        selectedAvatar = avatar;
+
+        genresGrid.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.checked = genres.includes(cb.value);
+          cb.closest('.genre-check-badge').classList.toggle('active', cb.checked);
         });
-    </script>
+      });
+
+      // Form Submit
+      document.getElementById('profile-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-profile');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+        const checkedGenres = [];
+        genresGrid.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+          checkedGenres.push(cb.value);
+        });
+
+        const name = document.getElementById('profile-name').value.trim();
+
+        try {
+          await PsalmStrings.auth.updateProfileData({
+            name,
+            avatarUrl: selectedAvatar,
+            genres: checkedGenres
+          });
+          PsalmStrings.ui.showToast('Profile and preferences updated successfully!', 'success');
+        } catch (err) {
+          PsalmStrings.ui.showToast(err.message, 'error');
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Save Profile Changes';
+        }
+      };
+    });
+  </script>
 </body>
 </html>

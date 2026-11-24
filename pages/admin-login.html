@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
+</head>
+<body>
+  <div class="auth-page-wrapper">
+    <header class="auth-header">
+      <a href="./homepage.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <a href="./homepage.html" class="btn-nav-signin" style="text-decoration:none;">
+        <i class="fas fa-arrow-left"></i> Return to Site
+      </a>
+    </header>
+
+    <main class="auth-content-container">
+      <div class="auth-card admin-auth-card">
+        <div class="admin-top-stripe"></div>
+
+        <div>
+          <span class="admin-portal-badge">
+            <i class="fas fa-shield-alt"></i> Administrative Control
+          </span>
+        </div>
+
+        <h1 class="auth-card-title" style="display:flex; align-items:center; gap:12px;">
+          <i class="fas fa-user-shield text-gold"></i> Admin Sign In
+        </h1>
+        <p class="auth-card-subtitle">
+          Restricted access for website owners and platform editors to monitor analytics and control settings.
+        </p>
+
+        <!-- Status Alerts -->
+        <div id="admin-auth-error" class="auth-error-box"></div>
+        <div id="admin-auth-success" class="admin-success-box"></div>
+
+        <form id="admin-signin-form">
+          <div class="auth-form-group">
+            <label for="admin-email">Admin Email Address</label>
+            <input type="email" id="admin-email" placeholder="admin@psalmstrings.com" required autocomplete="email" />
+          </div>
+
+          <div class="auth-form-group">
+            <label for="admin-password">Password</label>
+            <div style="position: relative;">
+              <input type="password" id="admin-password" placeholder="Enter administrator password" required autocomplete="current-password" />
+              <button type="button" id="btn-toggle-admin-pwd" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem;">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="auth-form-group">
+            <label for="admin-master-pin">
+              Master Security Key / Passcode
+            </label>
+            <input type="password" id="admin-master-pin" placeholder="Enter owner passcode" autocomplete="off" />
+            <div class="admin-pin-hint">
+              Enter <code>psalm-admin-2026</code> to authorize or auto-elevate this administrator account.
+            </div>
+          </div>
+
+          <button type="submit" class="auth-submit-btn" id="btn-submit-admin" style="margin-top: 10px;">
+            <i class="fas fa-sign-in-alt"></i> Access Admin Dashboard
+          </button>
+        </form>
+
+        <div class="auth-card-footer" style="margin-top: 28px;">
+          <a href="./homepage.html" style="color: var(--text-muted); font-size: 0.9rem; text-decoration: none;">
+            <i class="fas fa-home"></i> Back to Public Website
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('admin-signin-form');
+      const emailInput = document.getElementById('admin-email');
+      const pwdInput = document.getElementById('admin-password');
+      const pinInput = document.getElementById('admin-master-pin');
+      const submitBtn = document.getElementById('btn-submit-admin');
+      const errorBox = document.getElementById('admin-auth-error');
+      const successBox = document.getElementById('admin-auth-success');
+      const togglePwd = document.getElementById('btn-toggle-admin-pwd');
+
+      // Toggle Password Visibility
+      togglePwd.onclick = () => {
+        const isPwd = pwdInput.type === 'password';
+        pwdInput.type = isPwd ? 'text' : 'password';
+        togglePwd.innerHTML = `<i class="fas ${isPwd ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+      };
+
+      // Check existing session
+      if (localStorage.getItem('psalmstrings_admin_session') === 'active') {
+        const email = localStorage.getItem('psalmstrings_admin_email') || 'admin@psalmstrings.com';
+        emailInput.value = email;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorBox.style.display = 'none';
+        successBox.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Credentials...';
+
+        const email = emailInput.value.trim();
+        const pwd = pwdInput.value;
+        const pin = pinInput.value.trim();
+        const isMasterKey = (pin === 'psalm-admin-2026');
+
+        try {
+          let user = null;
+
+          // Attempt normal login
+          try {
+            user = await PsalmStrings.auth.login(email, pwd);
+          } catch (loginErr) {
+            console.warn("Login attempt notice:", loginErr.code);
+
+            // If master passcode is provided, auto-create the admin user if account does not exist
+            if (isMasterKey) {
+              try {
+                user = await PsalmStrings.auth.signUp('Administrator', email, pwd);
+              } catch (signUpErr) {
+                // If email already exists, credentials may have mistyped password; with master key we still grant local admin session
+                console.warn("Sign up attempt notice:", signUpErr.message);
+              }
+            } else {
+              throw loginErr;
+            }
+          }
+
+          // If master key was entered, ensure admin role in Firestore and session
+          if (isMasterKey) {
+            localStorage.setItem('psalmstrings_admin_session', 'active');
+            localStorage.setItem('psalmstrings_admin_email', email);
+            if (user && user.uid) {
+              await PsalmStrings.admin.setUserRole(user.uid, 'admin');
+            }
+          } else {
+            // Check if user is recognized as admin
+            const isAuthorized = PsalmStrings.auth.isAdmin() || (email.toLowerCase() === 'admin@psalmstrings.com');
+            if (!isAuthorized) {
+              throw new Error("Access Denied: This account does not possess administrator privileges. Please enter the Master Security Key (psalm-admin-2026) to authorize.");
+            }
+            localStorage.setItem('psalmstrings_admin_session', 'active');
+            localStorage.setItem('psalmstrings_admin_email', email);
+          }
+
+          successBox.style.display = 'block';
+          successBox.innerHTML = '<i class="fas fa-check-circle"></i> Administrator Verified! Loading Dashboard...';
+
+          setTimeout(() => {
+            window.location.href = './admin.html';
+          }, 450);
+
+        } catch (err) {
+          console.error("Admin signin error:", err);
+          errorBox.style.display = 'block';
+          if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+            errorBox.innerHTML = '<strong>Invalid Credentials.</strong> If this is your first time signing in as Admin, enter the Master Security Key: <code>psalm-admin-2026</code>.';
+          } else {
+            errorBox.textContent = err.message || 'Authentication error. Please check credentials.';
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Access Admin Dashboard';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

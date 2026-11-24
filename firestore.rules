@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'admin@psalmstrings.com'
+        || (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    // 1. User Profiles
+    // Anyone can read basic public profile info (for display names and avatars in comments)
+    // Only the account owner or an admin can update
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+
+      // 2. User Favourites Subcollection
+      // users/{userId}/favourites/{movieId}
+      match /favourites/{movieId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // 3. User Watchlist Subcollection
+      // users/{userId}/watchlist/{movieId}
+      match /watchlist/{movieId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // 4. User Ratings Subcollection
+      // users/{userId}/ratings/{movieId}
+      match /ratings/{movieId} {
+        allow read: if true;
+        allow write, delete: if isOwner(userId);
+      }
+    }
+
+    // 5. Movie Comments (Top-Level)
+    match /movie_comments/{commentId} {
+      // Anyone can read comments
+      allow read: if true;
+
+      // Authenticated users can create comments where userId matches auth.uid
+      allow create: if isAuthenticated() 
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 2
+        && request.resource.data.text.size() <= 2000;
+
+      // Author can edit text; other authenticated users can toggle like
+      allow update: if isAuthenticated() && (
+        (resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId)
+        || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likeCount', 'replyCount'])
+      );
+
+      // Author or admin can delete comment
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // 6. Comment Replies Subcollection
+      match /replies/{replyId} {
+        allow read: if true;
+
+        allow create: if isAuthenticated()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 2;
+
+        allow update: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid
+          || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'likeCount'])
+        );
+
+        allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      }
+    }
+
+    // 7. Site Analytics (Page Visit Impressions)
+    match /site_analytics/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 8. System Config (TMDB API Key & Announcements)
+    match /system_config/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 9. Custom Community Movies Catalog
+    match /movies/{movieId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+  }
+}

@@ -1,796 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PsalmStrings Homepage</title>
-    <link rel="stylesheet" href="../css/homepage.css" />
-    <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PsalmStrings - Discover Cinema &amp; Personalized Recommendations</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/homepage.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
 </head>
 <body>
-    <header class="header">
-      <div class="logo">PsalmStrings</div>
-      <input type="text" placeholder="Search" class="search-bar" />
-      <div class="hamburger">☰</div>
-        <div class="right-side">
-          <div class="menu">
-              <div class="menu-content">
-                <a href="#">Home</a>
-                <a href="../pages/my list.html">My List</a>
-                <div class="profile-dropdown">
-                  <a href="#" class="profile-link">Profile</a>
-                  <div class="dropdown-content">
-                      <a href="./profile.html">Profile</a>
-                      <a href="/settings">Settings</a>
-                      <div class="dropdown-divider"></div>
-                      <a href="../index.html" class="logout-link">Logout</a>
-                  </div>
-              </div>
-            </div>
+  <!-- Top Navigation Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="./homepage.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <nav class="nav-links-main">
+        <a href="./homepage.html" class="active">Home</a>
+        <a href="#trending">Trending</a>
+        <a href="#recommended">Recommended</a>
+        <a href="#popular">Popular</a>
+        <a href="#top-rated">Top Rated</a>
+        <a href="./my-list.html">My List</a>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <div class="header-search-wrapper">
+        <div class="search-input-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="global-search-input" placeholder="Search movies, cast, genres..." autocomplete="off" />
+        </div>
+        <div id="search-popup-results" class="search-results-popup"></div>
+      </div>
+
+      <!-- Auth State Container -->
+      <div class="header-auth-container"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Featured Hero Spotlight (Dynamically Populated) -->
+    <section class="homepage-hero" id="hero-section">
+      <div class="hero-inner">
+        <span class="hero-tagline-badge" id="hero-badge">
+          <i class="fas fa-fire"></i> Featured Spotlight
+        </span>
+        <h1 class="hero-movie-title" id="hero-title">Loading Featured Movie...</h1>
+        <div class="hero-meta-row" id="hero-meta">
+          <span class="badge-item badge-rating" id="hero-rating"><i class="fas fa-star"></i> --</span>
+          <span id="hero-year">--</span>
+          <span id="hero-genres">--</span>
+        </div>
+        <p class="hero-movie-desc" id="hero-desc">
+          Discover handpicked blockbusters, top trending cinematic masterpieces, and personalized recommendations tailored to your taste.
+        </p>
+        <div class="hero-buttons-row">
+          <button type="button" class="btn-hero-play" id="btn-hero-play-trailer">
+            <i class="fas fa-play"></i> Watch Trailer
+          </button>
+          <a href="#" class="btn-hero-info" id="btn-hero-more-info">
+            <i class="fas fa-info-circle"></i> More Info
+          </a>
         </div>
       </div>
-    </header>
+    </section>
 
-    <div class="hero">
-      <div class="hero-content">
-        <h1>Unicorn Academy</h1>
-        <p>Based on the books by Julie Sykes</p>
-        <button class="btn1">Play</button>
-        <button class="btn2">More Info</button>
+    <!-- Genre Quick Jump Navigation -->
+    <div class="genre-quick-bar">
+      <a href="#trending" class="genre-filter-pill active">All Trending</a>
+      <a href="#recommended" class="genre-filter-pill">Recommended For You</a>
+      <a href="#genre-28" class="genre-filter-pill">Action</a>
+      <a href="#genre-35" class="genre-filter-pill">Comedy</a>
+      <a href="#genre-878" class="genre-filter-pill">Science Fiction</a>
+      <a href="#genre-53" class="genre-filter-pill">Thriller</a>
+      <a href="#genre-27" class="genre-filter-pill">Horror</a>
+      <a href="#genre-10749" class="genre-filter-pill">Romance</a>
+      <a href="#genre-18" class="genre-filter-pill">Drama</a>
+      <a href="#genre-16" class="genre-filter-pill">Animation</a>
+    </div>
+
+    <!-- 1. Trending This Week -->
+    <section class="movie-category-section" id="trending">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-fire text-gold"></i> Trending This Week</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-trending"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-trending"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-trending"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 2. Recommended For You (Explainable Recommendations) -->
+    <section class="movie-category-section" id="recommended">
+      <div class="category-header">
+        <h3 class="category-title">
+          <i class="fas fa-wand-magic-sparkles text-gold"></i> Recommended For You
+        </h3>
+        <small id="recommendation-subtitle" class="text-muted"></small>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-recommended"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-recommended"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-recommended"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 3. Popular Movies -->
+    <section class="movie-category-section" id="popular">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-chart-line text-gold"></i> Popular Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-popular"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-popular"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-popular"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 4. Top Rated Movies -->
+    <section class="movie-category-section" id="top-rated">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-trophy text-gold"></i> Top Rated of All Time</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-toprated"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-toprated"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-toprated"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 5. Upcoming Releases -->
+    <section class="movie-category-section" id="upcoming">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-calendar-check text-gold"></i> Upcoming Releases</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-upcoming"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-upcoming"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-upcoming"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 6. Action Movies (ID 28) -->
+    <section class="movie-category-section" id="genre-28">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-bolt text-gold"></i> Action Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-action"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-action"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-action"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 7. Comedy Movies (ID 35) -->
+    <section class="movie-category-section" id="genre-35">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-laugh-beam text-gold"></i> Comedy Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-comedy"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-comedy"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-comedy"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 8. Science Fiction (ID 878) -->
+    <section class="movie-category-section" id="genre-878">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-rocket text-gold"></i> Science Fiction</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-scifi"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-scifi"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-scifi"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 9. Thriller Movies (ID 53) -->
+    <section class="movie-category-section" id="genre-53">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-mask text-gold"></i> Thriller Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-thriller"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-thriller"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-thriller"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 10. Horror Movies (ID 27) -->
+    <section class="movie-category-section" id="genre-27">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-ghost text-gold"></i> Horror Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-horror"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-horror"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-horror"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 11. Romance Movies (ID 10749) -->
+    <section class="movie-category-section" id="genre-10749">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-heart text-gold"></i> Romance Movies</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-romance"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-romance"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-romance"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 12. Drama (ID 18) -->
+    <section class="movie-category-section" id="genre-18">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-theater-masks text-gold"></i> Drama</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-drama"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-drama"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-drama"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- 13. Animation (ID 16) -->
+    <section class="movie-category-section" id="genre-16">
+      <div class="category-header">
+        <h3 class="category-title"><i class="fas fa-dragon text-gold"></i> Animation</h3>
+      </div>
+      <div class="category-slider-wrapper">
+        <button class="slider-nav-btn slider-nav-prev" id="btn-prev-animation"><i class="fas fa-chevron-left"></i></button>
+        <div class="category-slider" id="slider-animation"></div>
+        <button class="slider-nav-btn slider-nav-next" id="btn-next-animation"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>PsalmStrings</h4>
+        <p>A next-generation cinema discovery platform powered by TMDB and Firebase. Find trending blockbusters, personalize your watchlist, rate cinema, and engage in real-time movie discussions.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="#trending">Trending Now</a></li>
+          <li><a href="#popular">Popular Movies</a></li>
+          <li><a href="#top-rated">Top Rated</a></li>
+          <li><a href="#recommended">Personal Recommendations</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>My Library</h5>
+        <ul>
+          <li><a href="./my-list.html?tab=favourites">Favourites</a></li>
+          <li><a href="./my-list.html?tab=watchlist">Watchlist</a></li>
+          <li><a href="./profile.html">Genre Preferences</a></li>
+          <li><a href="./admin-login.html"><i class="fas fa-lock" style="font-size:0.75rem;"></i> Admin Portal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="./signin.html">Sign In</a></li>
+          <li><a href="./sigup.html">Create Free Account</a></li>
+          <li><a href="./profile.html">Account Settings</a></li>
+        </ul>
       </div>
     </div>
-
-    <div class="trending">
-      <h2>Trending</h2>
-      <div class="content-list">
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABa_KC_9PKT4jIsljf3hgc4mpyoiW45UI2IUXOiGYCwuJxDt38mT2xGoda-_Stuyo9IkdCs2_BHOc01L9MiCz_3-WpnUjbfdzCtg.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABa_KC_9PKT4jIsljf3hgc4mpyoiW45UI2IUXOiGYCwuJxDt38mT2xGoda-_Stuyo9IkdCs2_BHOc01L9MiCz_3-WpnUjbfdzCtg.png"
-              alt=""
-            />
-            <h3>BlackList</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button>
-            <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABb5k96r-Cn_W9kRrg944RVSLsx7BiUR1Euxd6pS1swDQHLIrUOB_rFbqT67DQhLSFrIcdHy5cWOPn-VdtXlxp0rNiJDXPHXLnRMd1G-a2TE75dmLhnP4zANmHVkntEezqUr3.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABb5k96r-Cn_W9kRrg944RVSLsx7BiUR1Euxd6pS1swDQHLIrUOB_rFbqT67DQhLSFrIcdHy5cWOPn-VdtXlxp0rNiJDXPHXLnRMd1G-a2TE75dmLhnP4zANmHVkntEezqUr3.png"
-              alt=""
-            />
-            <h3>The Recruit</h3>
-            <p>Season 2, Episode 5</p>
-            <button>play</button>
-            <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABc4kYiVc4FL5P9VvUT5MW17iXQk4pBEf1ZAE7kFVVYhUDVkBqCl2g5g32r2vhy4_yGSKy18-SPNaDpu5LDtd7MzvE7bkjgHlmXESrqBvCDLYRi5qcVvxd14D33qyR7j-N0o1.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABc4kYiVc4FL5P9VvUT5MW17iXQk4pBEf1ZAE7kFVVYhUDVkBqCl2g5g32r2vhy4_yGSKy18-SPNaDpu5LDtd7MzvE7bkjgHlmXESrqBvCDLYRi5qcVvxd14D33qyR7j-N0o1.png"
-              alt=""
-            />
-            <h3>DesignatedSurvivor</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button>
-            <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABc6LmU2jEqh3VRHrKHnw9yLjNCTnzi4f2vTT54_Bo23t4SiWNRimug0jXj3vsPrBAAngEWz4L3a6o7JNRAMmNGqck10bekVyZt4lOE_oq4ZcNnOYfzy6MiE2JiOqWj7SUC3ghpOts64ZrI2pNvLlzYj0ZfMKMAZY8_jDvaqPbplBUdrCx9lxr9BTusYp5BR_0D9zjcXIjPj.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABc6LmU2jEqh3VRHrKHnw9yLjNCTnzi4f2vTT54_Bo23t4SiWNRimug0jXj3vsPrBAAngEWz4L3a6o7JNRAMmNGqck10bekVyZt4lOE_oq4ZcNnOYfzy6MiE2JiOqWj7SUC3ghpOts64ZrI2pNvLlzYj0ZfMKMAZY8_jDvaqPbplBUdrCx9lxr9BTusYp5BR_0D9zjcXIjPj.png"
-              alt=""
-            />
-            <h3>You</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button>
-            <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABdrBICZV_FzDth-NMDVBnYnFdrU7LBPq0aNjW0S0pnbEpAGoTeEg4BIzTzQT_VKo5V9Rgo7cHTObtD8EGsIGENgtVoZTPyfnhlCgjLLaahUwUQQXy1Olc0nX04n8bK9y-avUzjjNwh_crmM8HiZ7x3vQUxEbkznCpc8.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABdrBICZV_FzDth-NMDVBnYnFdrU7LBPq0aNjW0S0pnbEpAGoTeEg4BIzTzQT_VKo5V9Rgo7cHTObtD8EGsIGENgtVoZTPyfnhlCgjLLaahUwUQQXy1Olc0nX04n8bK9y-avUzjjNwh_crmM8HiZ7x3vQUxEbkznCpc8.png"
-              alt=""
-            />
-            <h3>DEVA</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <div class="content-image">
-            <img
-              src="../media/AAAABa_KC_9PKT4jIsljf3hgc4mpyoiW45UI2IUXOiGYCwuJxDt38mT2xGoda-_Stuyo9IkdCs2_BHOc01L9MiCz_3-WpnUjbfdzCtg.png"
-              alt=""
-            />
-          </div>
-          <div class="content-info">
-            <img
-              src="../media/AAAABa_KC_9PKT4jIsljf3hgc4mpyoiW45UI2IUXOiGYCwuJxDt38mT2xGoda-_Stuyo9IkdCs2_BHOc01L9MiCz_3-WpnUjbfdzCtg.png"
-              alt=""
-            />
-            <h3>Blacklist</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <!-- Repeat this pattern for all content-items -->
-      </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Data provided by TMDB. Authenticated by Firebase.</p>
+      <p>Your Personal Movie Guide.</p>
     </div>
+  </footer>
 
-    <div class="top-films">
-      <h2>Continue watching for Psalm</h2>
-      <div class="content-list">
-        <div class="content-item">
-          <img
-            src="../media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-              alt=""
-            />
-            <h3>Olalade</h3>
-            <p>Season 1, Complete Episodes</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABfSjV_WrYEkA6aMtwGRknqc0jbBP-w5FEQjR3b0r2iC8C7rtoSajJlZdpLrCiEP2yCD6jBOD2QoAXDp7hG6dd1-3eePqkkb9W8o.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABfSjV_WrYEkA6aMtwGRknqc0jbBP-w5FEQjR3b0r2iC8C7rtoSajJlZdpLrCiEP2yCD6jBOD2QoAXDp7hG6dd1-3eePqkkb9W8o.png"
-              alt=""
-            />
-            <h3>Breaded Life</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABe-v06pN0a79Ly1CB3Xy69ySKauhnBKtisgukrcDAVCPDGhJEx1xg8cKTrFhUVtexFAQEVVE32WiKw5PjkTLJeBmdBEI0TnZhPk.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABe-v06pN0a79Ly1CB3Xy69ySKauhnBKtisgukrcDAVCPDGhJEx1xg8cKTrFhUVtexFAQEVVE32WiKw5PjkTLJeBmdBEI0TnZhPk.png"
-              alt=""
-            />
-            <h3>Ride Along 2</h3>
-            <p>Part 2</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABe3Y7aYMZTkJrHCP4U9I6raI1II6d62iamdF2I7jJ1KX3usCpveOqrfhX6o0JQ6UyBbYRvFvCqCjQTEdVcV4TTRYiMUDRjJ0PT0.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABe3Y7aYMZTkJrHCP4U9I6raI1II6d62iamdF2I7jJ1KX3usCpveOqrfhX6o0JQ6UyBbYRvFvCqCjQTEdVcV4TTRYiMUDRjJ0PT0.png"
-              alt=""
-            />
-            <h3>Better Call Saul</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABfuBxwODJWGpnxkkB_o4u6261-94UU3qXviCR10RUPHt_t2aUmLdxZSf9Ya1QPVE-RSGPIFap0ktl5E9IzJCdmOleGJlBtkgbJ9w5m7dY_HIg34-vtCLyJn7oD0YolAl8jOJ.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABfuBxwODJWGpnxkkB_o4u6261-94UU3qXviCR10RUPHt_t2aUmLdxZSf9Ya1QPVE-RSGPIFap0ktl5E9IzJCdmOleGJlBtkgbJ9w5m7dY_HIg34-vtCLyJn7oD0YolAl8jOJ.png"
-              alt=""
-            />
-            <h3>Money Heist</h3>
-            <p>Season 3, Complete Episode</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABfVJZq3bV6nKMMhQI2Co82kWIFhUTTMrixPghqztQAsiZUkjPVOI9MuljNtBRXqRx5sJBMIgmDuEI1fpLZxkLQrgL_wJlk5Ft0s88tS6SizzKICwHVuTC_G8vPD0JZchd3hi.png"
-              alt=""
-            />
-            <h3>Stranger Things</h3>
-            <p>Season 4, Episode 1</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABQI4nvvc7cBSIEzeLz1Tzo7j2c1RGppVHJVfKsfChmmtpn3dXpUgWG9SWK47luyU2--bwJhqgyWMfIsqKOivZvxVC8b1z-HEKhhF_8i8MPe9eYwaNxw04_geHILcsaDe_xZJTzW8Ru40-NVX2Eq1iMVa6PV9sMBYr5Q.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABQI4nvvc7cBSIEzeLz1Tzo7j2c1RGppVHJVfKsfChmmtpn3dXpUgWG9SWK47luyU2--bwJhqgyWMfIsqKOivZvxVC8b1z-HEKhhF_8i8MPe9eYwaNxw04_geHILcsaDe_xZJTzW8Ru40-NVX2Eq1iMVa6PV9sMBYr5Q.png"
-              alt=""
-            />
-            <h3>The Forge</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Script Initialization -->
+  <script>
+    let heroTrailerKey = 'zSWdZVtXT7E';
+    let heroMovieTitle = '';
 
-    <div class="new-releases">
-      <h2>New Releases</h2>
-      <div class="content-list">
-        <div class="content-item">
-          <img
-            src="../media/AAAABSuETmn8b-JRGI6AVFblmE4BG7JIH522XL4i28oTFIXy_vq14HlQW6RvW-bcLLrB3xNBcHK8sQan8CPvbc5Nnyfg3wjnezngMJo.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABSuETmn8b-JRGI6AVFblmE4BG7JIH522XL4i28oTFIXy_vq14HlQW6RvW-bcLLrB3xNBcHK8sQan8CPvbc5Nnyfg3wjnezngMJo.png"
-              alt=""
-            />
-            <h3>BeastS</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABSyDb3rI3bik7B5nSbjEI97xkAyJldioqfpxvPUN7Hn30KI3IP13QTap5cY9qPqmFq11H3mN-Cj0aDikGjgv87cg2RaIqiz-dPQqet193gtZJAxW4SAD6fDhflUW4mHeEITroC8bpkp4MxV6i-tQmZ0rEKAJDgchZGVXv70ltxRkBq___FnQV64GoS3BuYg.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABSyDb3rI3bik7B5nSbjEI97xkAyJldioqfpxvPUN7Hn30KI3IP13QTap5cY9qPqmFq11H3mN-Cj0aDikGjgv87cg2RaIqiz-dPQqet193gtZJAxW4SAD6fDhflUW4mHeEITroC8bpkp4MxV6i-tQmZ0rEKAJDgchZGVXv70ltxRkBq___FnQV64GoS3BuYg.png"
-              alt=""
-            />
-            <h3>Beauty in Black</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABTTMQLENosddwzXFSvCjwWm33bLl9qvywSfsxJhaGNxg6b5kDimncTFGamZeDjv0yjVZ0Q_n8M_v2BRtJv4diyihStXFCpilcrs.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABTTMQLENosddwzXFSvCjwWm33bLl9qvywSfsxJhaGNxg6b5kDimncTFGamZeDjv0yjVZ0Q_n8M_v2BRtJv4diyihStXFCpilcrs.png"
-              alt=""
-            />
-            <h3>Lisabi</h3>
-            <p>Season 1, complete Episode</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABUu9gy6s1MZqYBrj8wnNJKSZpug3DSN8rpQ8bzpR51CdZp-BWxsS3aNBNbEfg6IdOtECXJTuJuENr65JIxtXN496nmUSRN8VfR4.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABUu9gy6s1MZqYBrj8wnNJKSZpug3DSN8rpQ8bzpR51CdZp-BWxsS3aNBNbEfg6IdOtECXJTuJuENr65JIxtXN496nmUSRN8VfR4.png"
-              alt=""
-            />
-            <h3>The Rookie</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABUyes1mzhgLVfeEugRuCTRxvMEcdtvE1NLTUkgfrMZlNmsAJVRyIDrH1D_8SyggYH60AbLm2YUDdnWWwoMCpx_yoSTtwvp_BOyq7NqPaDARRvSr-5AsG-wIKABTBLSfelXuU36fxxUGJw0wKp6gMZqSN1QXFBL-yeJSrvpof0_ZaI06-1VqpNluGlBxvdPKRGV8O6hF0EgF.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABUyes1mzhgLVfeEugRuCTRxvMEcdtvE1NLTUkgfrMZlNmsAJVRyIDrH1D_8SyggYH60AbLm2YUDdnWWwoMCpx_yoSTtwvp_BOyq7NqPaDARRvSr-5AsG-wIKABTBLSfelXuU36fxxUGJw0wKp6gMZqSN1QXFBL-yeJSrvpof0_ZaI06-1VqpNluGlBxvdPKRGV8O6hF0EgF.png"
-              alt=""
-            />
-            <h3>Adolescence</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABW_vLDikFtck90vi5CjhV7t14SC8zaX70nbwpSLuDHaWhO4jimGQE7pcBkhQcy-z6v7K5QUtqa2R_yRa1sxG98-SQGnNKwqCqpFBzXmgZpyt_234Ji06c85VRkqLajnNeHIXBmpBQr03mtYQukr23iLmRw8_VUuPjWMUTv0MnT1jtQTU-1FAkq5RUM0Zbq0.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABW_vLDikFtck90vi5CjhV7t14SC8zaX70nbwpSLuDHaWhO4jimGQE7pcBkhQcy-z6v7K5QUtqa2R_yRa1sxG98-SQGnNKwqCqpFBzXmgZpyt_234Ji06c85VRkqLajnNeHIXBmpBQr03mtYQukr23iLmRw8_VUuPjWMUTv0MnT1jtQTU-1FAkq5RUM0Zbq0.png"
-              alt=""
-            />
-            <h3>The Life List</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABWfC4ixYvqmgtAed6FvH1DaNHLdGXNSzBfGvYSeZ5OD9gj6a8XilhrRUfj5ox62ucEZKhYL7ukULpQz3DsmAJZlld0vErkEIG1c.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABWfC4ixYvqmgtAed6FvH1DaNHLdGXNSzBfGvYSeZ5OD9gj6a8XilhrRUfj5ox62ucEZKhYL7ukULpQz3DsmAJZlld0vErkEIG1c.png"
-              alt=""
-            />
-            <h3>The Apothecaru Daries</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABWZxGXclwmX5ukrtudKX2p03-xGEyzEcQoS1a75_BlkSA4zu5nIQbCQPEOD5NX-wxTdr_wAOaZsQJgZ44cZEFCg9bt0jz5UUJksd40wfT9ZRG9q-XvviGTP7JOYMp30OrUVKEBF3uNkxDpU4rNeynfhXdmAg1ViOsMNJMOJw6iCEhk72yMFH08-I6T7Cb_SCm2zIDPdFl2d.png"
-            alt=""
-          />
-          <div class="content-info">
-            <img
-              src="../media/AAAABWZxGXclwmX5ukrtudKX2p03-xGEyzEcQoS1a75_BlkSA4zu5nIQbCQPEOD5NX-wxTdr_wAOaZsQJgZ44cZEFCg9bt0jz5UUJksd40wfT9ZRG9q-XvviGTP7JOYMp30OrUVKEBF3uNkxDpU4rNeynfhXdmAg1ViOsMNJMOJw6iCEhk72yMFH08-I6T7Cb_SCm2zIDPdFl2d.png"
-              alt=""
-            />
-            <h3>Million Dollar Secret</h3>
-            <p>Full Movie</p>
-            <button>play</button> <button type="submit" id="watchList">Watchlist</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // 1. Search Autocomplete
+      PsalmStrings.ui.initSearch('global-search-input', 'search-popup-results');
 
-    <div class="top-movies">
-      <h2>Top Movies in Nigeria</h2>
-      <div class="content-list">
-        <div class="content-item">
-          <img
-            src="../media/AAAABcNmdTnXcmi3id7L0kfo5J_7_Z64aVkLxyVpFzYM42YTyQcQuQhB40z2Yg8peYM6oPFHcKUL4WocCx6IUktUPEieKfZFJhwHMX4.png"
-            alt=""
-          />
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABSPwTZpJ8rVRgb_ZXAvt07Yz1NpStaT2h7JvPl5XLX25ySFcJaDtPXLTfyMrTGeja9fppTF2NtMquKvt-YJWfI9LIOO3FfFHMd-VMF39VWqLlGyXL_5mBecvkB--D3kUiv2cKQ.png"
-            alt=""
-          />
-        </div>
-        <div class="content-item">
-          <img
-            src="../media/AAAABSTWw0WbjyTmSytz_Avcevan0tYyu0gSdRW3vWQsyM4n7Cj-Doww3xnnRxHD2767epWfigMR-WriF8R19rQTNWu0HMwRwdW3zdBU5eEuE2rtesTdMoNsaiQUUluai-MrgUoYrUq-v6aMGUpD2NuwWC9zO272GzuBQMdO7C1yS3I1fB1fpaleSb7PjEw-FEBx_ynxc2jILw.png"
-            alt=""
-          />
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABVwd7Y-Tlv4pfDHTvwRGNI1ytni2EfTlJH9furPGJFqrCiZrTMGAWrbKigNqXgVpHcryviLv-IhecLuFrAH86a2J1y06S0L68W1EaC9it91tzg2vJ6g8FHljbOrg6K2TFz0TiA.png"
-            alt=""
-          />
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABV9NUmH2TRm9SfV5pTu7C98S9Iyy2Ryf8Cv4dvll9szrRRYnoQ3ZUuV_ZoPojFzM8TPHSeFfG-VZ1p44sfRI_voryIIcekl8H63YanFq8jPTfiX-80cY7twMbDT45KB3-49xPc1T1fovLowQhQDVQm3jpQkTgeTG8C2xkpWBbny4TQ.png"
-            alt=""
-          />
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABVYO9mIcfaCu69UXVVDAmfgXES0nLpbicfZDvozZzsJXm7czsu7jwUHLU0E61aVPuFxG64Nc5Ts8GfNw0uY72__JXGXDzkqAcia0q85UN933zI_5Glc1PB4SFc7UdP3FUagVJUA0JJBAKuhvM9gndPrxg-SJGUoDK-oePxu-6TFSvA.png"
-            alt=""
-          />
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABX-6oPrkx27ZVW-QVtQxqgkqJBOWfnWvkUBeIvBAlNG-ff_e52xtXAWn8E4Y18RFwDmVt6hYBh-gfLdQf8Ys61OInmsq7FnDz0A4rfNDJ9ZRClWy6qbDQDESCkU5xX7cvIR2_PboK8Xrg8N-EMF3SsQIGG8zEjUStWA6J1iVmbRnYA.png"
-            alt=""
-          />
-        </div>
-        <div
-          class="content-item"
-          style="background-image: url('trending3.jpg')"
-        >
-          <img
-            src="../media/AAAABSuco52uORkbkxXlbJKTFxOYpiABculZyJFD2WDYVGwnHhYkG9ulxcwUR_CbBpMaWqGm9JFJzJ2q_WOamlB76-lWgk2tvaozqTE.png"
-            alt=""
-          />
-        </div>
-      </div>
-    </div>
+      // 2. Carousel Navigation Buttons
+      PsalmStrings.ui.setupCarousel('slider-trending', 'btn-prev-trending', 'btn-next-trending');
+      PsalmStrings.ui.setupCarousel('slider-recommended', 'btn-prev-recommended', 'btn-next-recommended');
+      PsalmStrings.ui.setupCarousel('slider-popular', 'btn-prev-popular', 'btn-next-popular');
+      PsalmStrings.ui.setupCarousel('slider-toprated', 'btn-prev-toprated', 'btn-next-toprated');
+      PsalmStrings.ui.setupCarousel('slider-upcoming', 'btn-prev-upcoming', 'btn-next-upcoming');
+      PsalmStrings.ui.setupCarousel('slider-action', 'btn-prev-action', 'btn-next-action');
+      PsalmStrings.ui.setupCarousel('slider-comedy', 'btn-prev-comedy', 'btn-next-comedy');
+      PsalmStrings.ui.setupCarousel('slider-scifi', 'btn-prev-scifi', 'btn-next-scifi');
+      PsalmStrings.ui.setupCarousel('slider-thriller', 'btn-prev-thriller', 'btn-next-thriller');
+      PsalmStrings.ui.setupCarousel('slider-horror', 'btn-prev-horror', 'btn-next-horror');
+      PsalmStrings.ui.setupCarousel('slider-romance', 'btn-prev-romance', 'btn-next-romance');
+      PsalmStrings.ui.setupCarousel('slider-drama', 'btn-prev-drama', 'btn-next-drama');
+      PsalmStrings.ui.setupCarousel('slider-animation', 'btn-prev-animation', 'btn-next-animation');
 
-    <div class="genres">
-      <span class="genre-badge">Action</span>
-      <span class="genre-badge">Animation</span>
-      <span class="genre-badge">Comedy</span>
-      <span class="genre-badge">Drama</span>
-      <span class="genre-badge">Horror</span>
-      <span class="genre-badge">Suspenseful</span>
-    </div>
+      // 3. Load Content immediately
+      loadAllContent();
 
-    <div class="footer">
-      <p>&copy; 2025 PsalmStrings. All rights reserved.</p>
-      <p>Terms of Use | Privacy Policy</p>
-    </div>
+      // 4. Watch Trailer button on Hero
+      const playBtn = document.getElementById('btn-hero-play-trailer');
+      if (playBtn) {
+        playBtn.addEventListener('click', function () {
+          PsalmStrings.ui.openTrailerModal(heroTrailerKey || 'zSWdZVtXT7E', heroMovieTitle);
+        });
+      }
 
-    <script type="module">  
-      // Import Firebase modules  
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";  
-      import {   
-        getFirestore,   
-        doc,   
-        setDoc,  
-        serverTimestamp  
-      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";  
-      import {   
-        getAuth,  
-        onAuthStateChanged,  
-        signOut  
-      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";  
-    
-      // Firebase configuration  
-      const firebaseConfig = {  
-        apiKey: "AIzaSyC5kROT39vzmZztR4k2BzYSL3PFlio1tUM",  
-        authDomain: "psalmstrings-7b9a9.firebaseapp.com",  
-        projectId: "psalmstrings-7b9a9",  
-        storageBucket: "psalmstrings-7b9a9.appspot.com",  
-        messagingSenderId: "765832868823",  
-        appId: "1:765832868823:web:0dd6e79ee4d3acde041192",  
-        measurementId: "G-LV8DV0TC8E"  
-      };  
-    
-      // Initialize Firebase  
-      const app = initializeApp(firebaseConfig);  
-      const db = getFirestore(app);  
-      const auth = getAuth(app);  
-    
-      // DOM Ready  
-      document.addEventListener('DOMContentLoaded', function() {  
-        initMobileMenu();  
-        initSearch();  
-        initAuth();  
-      });  
-    
-      // Mobile Menu  
-      function initMobileMenu() {  
-        const hamburger = document.querySelector('.hamburger');  
-        const rightSide = document.querySelector('.right-side');  
-        const profileLink = document.querySelector('.profile-link');  
-        
-        if (!hamburger || !rightSide || !profileLink) return;  
-    
-        hamburger.addEventListener('click', function(e) {  
-          e.stopPropagation();  
-          rightSide.classList.toggle('active');  
-        });  
-        
-        profileLink.addEventListener('click', function(e) {  
-          e.preventDefault();  
-          e.stopPropagation();  
-          this.nextElementSibling?.classList.toggle('show');  
-        });  
-        
-        document.addEventListener('click', function(event) {  
-          if (!event.target.closest('.right-side') && !event.target.closest('.hamburger')) {  
-            rightSide.classList.remove('active');  
-          }  
-          if (!event.target.closest('.profile-dropdown')) {  
-            document.querySelectorAll('.dropdown-content').forEach(d => {  
-              d.classList.remove('show');  
-            });  
-          }  
-        });  
-      }  
-    
-      // Watchlist  
-      function setupWatchlistButtons(user) {  
-        document.querySelectorAll('#watchList').forEach(button => {  
-          button.addEventListener('click', async function(event) {  
-            event.preventDefault();  
-            
-            if (!user) {  
-              showToast('Please sign in to add to your watchlist', true);  
-              return;  
-            }  
-    
-            const contentItem = this.closest('.content-info');  
-            if (!contentItem) return;  
-    
-            const title = contentItem.querySelector('h3')?.textContent;  
-            const episodeInfo = contentItem.querySelector('p')?.textContent;  
-            const imageUrl = contentItem.querySelector('img')?.src;  
-            
-            if (!title || !episodeInfo || !imageUrl) {  
-              console.error("Missing required content data");  
-              return;  
-            }  
-    
-            try {  
-              const userId = user.uid;  
-              const docId = `${userId}_${title.replace(/\s+/g, '_')}_${Date.now()}`;  
-    
-              await setDoc(doc(db, "watchlist", docId), {  
-                title: title,  
-                episode: episodeInfo,  
-                imageUrl: imageUrl,  
-                userId: userId,  
-                addedAt: serverTimestamp()  
-              });  
-    
-              this.textContent = 'Added';  
-              this.style.backgroundColor = '#4CAF50';  
-              this.style.color = 'white';  
-              this.style.border = 'none';  
-              this.disabled = true;  
-    
-              showToast('Added to your watchlist!');  
-              
-            } catch (error) {  
-              console.error("Error adding to watchlist:", error);  
-              showToast('Failed to add to watchlist', true);  
-            }  
-          });  
-        });  
-      }  
+      // 5. Listen to auth/library changes to update recommendations
+      PsalmStrings.auth.onAuth(function () {
+        loadRecommendations();
+      });
+      PsalmStrings.library.onLibraryChange(function () {
+        loadRecommendations();
+      });
+    });
+
+    async function loadAllContent() {
+      // 1. Trending & Hero Banner
+      const trending = await PsalmStrings.tmdbApi.getTrending('week');
+      populateSlider('slider-trending', trending);
+      if (trending && trending.length > 0) {
+        setupHero(trending[0]);
+      }
+
+      // 2. Recommendations
+      loadRecommendations();
+
+      // 3. Popular
+      PsalmStrings.tmdbApi.getPopular(1).then(m => populateSlider('slider-popular', m));
+
+      // 4. Top Rated
+      PsalmStrings.tmdbApi.getTopRated(1).then(m => populateSlider('slider-toprated', m));
+
+      // 5. Upcoming
+      PsalmStrings.tmdbApi.getUpcoming(1).then(m => populateSlider('slider-upcoming', m));
+
+      // 6. Genres
+      PsalmStrings.tmdbApi.getByGenre(28).then(m => populateSlider('slider-action', m));
+      PsalmStrings.tmdbApi.getByGenre(35).then(m => populateSlider('slider-comedy', m));
+      PsalmStrings.tmdbApi.getByGenre(878).then(m => populateSlider('slider-scifi', m));
+      PsalmStrings.tmdbApi.getByGenre(53).then(m => populateSlider('slider-thriller', m));
+      PsalmStrings.tmdbApi.getByGenre(27).then(m => populateSlider('slider-horror', m));
+      PsalmStrings.tmdbApi.getByGenre(10749).then(m => populateSlider('slider-romance', m));
+      PsalmStrings.tmdbApi.getByGenre(18).then(m => populateSlider('slider-drama', m));
+      PsalmStrings.tmdbApi.getByGenre(16).then(m => populateSlider('slider-animation', m));
+    }
+
+    async function loadRecommendations() {
+      const profile = PsalmStrings.auth.userProfile;
+      const favs = Array.from(PsalmStrings.library.favourites.values());
+      const rates = Array.from(PsalmStrings.library.ratings.values());
+
+      const rec = await PsalmStrings.recommendations.getRecommendations({
+        preferredGenres: profile?.genres || [],
+        favourites: favs,
+        ratings: rates
+      });
+
+      const sub = document.getElementById('recommendation-subtitle');
+      if (rec.personalized) {
+        sub.textContent = `Personalized for ${profile?.name || 'you'} (based on your interest in ${rec.topGenre})`;
+      } else {
+        sub.textContent = `Curated for movie lovers. Save favourites or sign in for tailored recommendations!`;
+      }
+      populateSlider('slider-recommended', rec.results);
+    }
+
+    function populateSlider(id, movies) {
+      const slider = document.getElementById(id);
+      if (!slider) return;
+      slider.innerHTML = '';
+      if (!movies || !movies.length) {
+        slider.innerHTML = '<p class="text-muted" style="padding: 10px 40px;">No movies found.</p>';
+        return;
+      }
+      movies.forEach(function (m) {
+        slider.appendChild(PsalmStrings.ui.createMovieCard(m));
+      });
+    }
+
+    async function setupHero(movie) {
+      if (!movie) return;
+      document.getElementById('hero-title').textContent = movie.title;
+      document.getElementById('hero-desc').textContent = movie.overview;
+      document.getElementById('hero-rating').innerHTML = `<i class="fas fa-star"></i> ${movie.vote_average ? Number(movie.vote_average).toFixed(1) : 'NR'}`;
+      document.getElementById('hero-year').textContent = movie.release_date ? movie.release_date.substring(0, 4) : '';
       
-       // Add this CSS for the search results  
-  const style = document.createElement('style');  
-  style.textContent = `  
-    .search-results-popup {  
-      position: absolute;  
-      background: #1a1a1a;  
-      border: 1px solid #333;  
-      border-radius: 4px;  
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);  
-      z-index: 1000;  
-      max-height: 300px;  
-      overflow-y: auto;  
-    }  
-    .search-result-item {  
-      display: flex;  
-      align-items: center;  
-      padding: 8px 12px;  
-      cursor: pointer;  
-      transition: background 0.2s;  
-    }  
-    .search-result-item:hover {  
-      background: #333;  
-    }  
-    .search-result-item img {  
-      width: 40px;  
-      height: 40px;  
-      object-fit: cover;  
-      margin-right: 10px;  
-      border-radius: 2px;  
-    }  
-    .no-results {  
-      padding: 12px;  
-      color: #999;  
-    }  
-  `;  
-  document.head.appendChild(style);
+      const genreNames = (movie.genre_ids || []).slice(0, 2).map(id => PsalmStrings.CONFIG.GENRES[id]).filter(Boolean).join(' • ');
+      document.getElementById('hero-genres').textContent = genreNames;
 
+      const backdrop = PsalmStrings.tmdbApi.getBackdropUrl(movie.backdrop_path);
+      document.getElementById('hero-section').style.backgroundImage = `url('${backdrop}')`;
+      document.getElementById('btn-hero-more-info').href = `./movie-details.html?id=${movie.id}`;
 
-      // Search  
-      function initSearch() {  
-        const searchBar = document.querySelector('.search-bar');  
-        if (!searchBar) return;  
-    
-        const searchResultsPopup = document.createElement('div');  
-        searchResultsPopup.className = 'search-results-popup';  
-        searchResultsPopup.style.display = 'none';  
-        document.body.appendChild(searchResultsPopup);  
-    
-        const allMovies = Array.from(document.querySelectorAll('.content-info')).map(content => {  
-          return {  
-            title: content.querySelector('h3')?.textContent || '',  
-            image: content.querySelector('img')?.src || '',  
-            element: content.closest('.content-item')  
-          };  
-        }).filter(movie => movie.title && movie.image && movie.element);  
-    
-        let searchTimeout;  
-    
-        searchBar.addEventListener('input', function(e) {  
-          clearTimeout(searchTimeout);  
-          searchTimeout = setTimeout(() => {  
-            const searchTerm = e.target.value.toLowerCase().trim();  
-            
-            if (searchTerm.length === 0) {  
-              searchResultsPopup.style.display = 'none';  
-              return;  
-            }  
-    
-            const results = allMovies.filter(movie =>   
-              movie.title.toLowerCase().includes(searchTerm)  
-            ).slice(0, 5);  
-    
-            if (results.length > 0) {  
-              searchResultsPopup.innerHTML = results.map(movie => `  
-                <div class="search-result-item" data-movie-id="${movie.title}">  
-                  <img src="${movie.image}" alt="${movie.title}">  
-                  <span>${movie.title}</span>  
-                </div>  
-              `).join('');  
-              
-              const searchRect = searchBar.getBoundingClientRect();  
-              searchResultsPopup.style.top = `${searchRect.bottom + window.scrollY}px`;  
-              searchResultsPopup.style.left = `${searchRect.left + window.scrollX}px`;  
-              searchResultsPopup.style.width = `${searchRect.width}px`;  
-              searchResultsPopup.style.display = 'block';  
-            } else {  
-              searchResultsPopup.innerHTML = '<div class="no-results">No movies found</div>';  
-              searchResultsPopup.style.display = 'none';  
-            }  
-          }, 300);  
-        });  
-    
-        searchResultsPopup.addEventListener('click', function(e) {  
-          const item = e.target.closest('.search-result-item');  
-          if (!item) return;  
-    
-          const movieTitle = item.getAttribute('data-movie-id');  
-          const movie = allMovies.find(m => m.title === movieTitle);  
-          
-          if (movie?.element) {  
-            movie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });  
-            movie.element.style.boxShadow = '0 0 0 3px rgba(255, 255, 255, 0.5)';  
-            setTimeout(() => {  
-              movie.element.style.boxShadow = 'none';  
-            }, 2000);  
-            
-            searchResultsPopup.style.display = 'none';  
-            searchBar.value = '';  
-          }  
-        });  
-    
-        document.addEventListener('click', function(e) {  
-          if (!searchBar.contains(e.target) && !searchResultsPopup.contains(e.target)) {  
-            searchResultsPopup.style.display = 'none';  
-          }  
-        });  
-      }  
-    
-      // Auth  
-      function initAuth() {  
-        const logoutLink = document.querySelector('.logout-link');  
-        if (logoutLink) {  
-          logoutLink.addEventListener('click', (e) => {  
-            e.preventDefault();  
-            handleLogout();  
-          });  
-        }  
-    
-        onAuthStateChanged(auth, (user) => {  
-          if (user) {  
-            setupWatchlistButtons(user);  
-          } else {  
-            document.querySelectorAll('#watchList').forEach(button => {  
-              button.addEventListener('click', (e) => {  
-                e.preventDefault();  
-                showToast('Please sign in to add to your watchlist', true);  
-              });  
-            });  
-          }  
-        });  
-      }  
-    
-      // Logout  
-      function handleLogout() {  
-        signOut(auth).then(() => {  
-          window.location.href = "../index.html";   
-        }).catch((error) => {  
-          console.error("Logout error:", error);  
-          showToast("Error signing out. Please try again.", true);  
-        });  
-      }  
-    
-      // Toast  
-      function showToast(message, isError = false) {  
-        const toast = document.createElement('div');  
-        toast.className = 'toast-notification';  
-        toast.textContent = message;  
-        toast.style.position = 'fixed';  
-        toast.style.bottom = '20px';  
-        toast.style.left = '50%';  
-        toast.style.transform = 'translateX(-50%)';  
-        toast.style.padding = '12px 24px';  
-        toast.style.backgroundColor = isError ? '#f44336' : '#4CAF50';  
-        toast.style.color = 'white';  
-        toast.style.borderRadius = '4px';  
-        toast.style.zIndex = '1000';  
-        toast.style.transition = 'opacity 0.5s';  
-        document.body.appendChild(toast);  
-    
-        setTimeout(() => {  
-          toast.style.opacity = '0';  
-          setTimeout(() => toast.remove(), 500);  
-        }, 3000);  
-      }  
-    </script>  
-  </body>
+      heroTrailerKey = movie.trailer_key || 'zSWdZVtXT7E';
+      heroMovieTitle = movie.title || '';
+    }
+  </script>
+</body>
 </html>

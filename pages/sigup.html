@@ -1,283 +1,151 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Document</title> 
-    <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon">
-    <style>  
-        * {  
-            margin: 0;  
-            padding: 0;  
-            box-sizing: border-box;  
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  
-        }  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Free Account - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/profile.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
 
-        body {  
-            background-color: #141414;  
-            color: white;  
-        }  
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-        /* Header Styles */  
-        .header {  
-            background-color: #000000;  
-            padding: 20px 50px;  
-            display: flex;  
-            justify-content: space-between;  
-            align-items: center;  
-        }  
+  <!-- PsalmStrings Core Application Library -->
+  <script src="../js/app.js"></script>
+</head>
+<body>
+  <div class="auth-page-wrapper">
+    <header class="auth-header">
+      <a href="../index.html" class="site-logo">
+        <i class="fas fa-film"></i> PsalmStrings
+      </a>
+      <a href="./homepage.html" class="btn-nav-signin">
+        <i class="fas fa-compass"></i> Explore Guest Mode
+      </a>
+    </header>
 
-        .header button {  
-            padding: 10px;  
-            background: rgb(252, 210, 24);  
-            border: none;  
-            border-radius: 5px;  
-            font-size: 1.1rem;  
-            font-weight: bold;  
-            color: black;  
-            cursor: pointer;  
-        }  
+    <main class="auth-content-container">
+      <div class="auth-card" style="max-width: 520px;">
+        <h1 class="auth-card-title">Create Account</h1>
+        <p class="auth-card-subtitle">Join PsalmStrings to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions.</p>
 
-        .logo {  
-            color: rgb(252, 210, 24);  
-            font-size: 2rem;  
-            font-weight: bold;  
-        }  
+        <div class="auth-error-box" id="auth-error-message"></div>
 
-        .nav-links a {  
-            color: white;  
-            text-decoration: none;  
-            margin-left: 30px;  
-            font-size: 1.1rem;  
-        }  
+        <form id="sign-up-form">
+          <div class="auth-form-group">
+            <label for="signup-fullname">Full Name</label>
+            <input type="text" id="signup-fullname" placeholder="e.g. Alex Morgan" required autocomplete="name" />
+          </div>
 
-        /* Main Content */  
-        .signup-container {  
-            display: flex;  
-            justify-content: center;  
-            align-items: center;  
-            min-height: 100vh;  
-            padding: 20px;  
-        }  
+          <div class="auth-form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="name@example.com" required autocomplete="email" />
+          </div>
 
-        .signup-form {  
-            background: rgba(0, 0, 0, 0.8);  
-            padding: 40px;  
-            border-radius: 10px;  
-            width: 100%;  
-            max-width: 600px;  
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);  
-        }  
+          <div class="form-grid-2">
+            <div class="auth-form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="At least 6 characters" required autocomplete="new-password" />
+            </div>
 
-        .form-title {  
-            color: rgb(252, 210, 24);  
-            font-size: 2.5rem;  
-            margin-bottom: 30px;  
-            text-align: center;  
-        }  
+            <div class="auth-form-group">
+              <label for="signup-confirm-password">Confirm Password</label>
+              <input type="password" id="signup-confirm-password" placeholder="Confirm password" required autocomplete="new-password" />
+            </div>
+          </div>
 
-        .form-group {  
-            margin-bottom: 20px;  
-        }  
+          <!-- Avatar Preset Selection -->
+          <div class="auth-form-group">
+            <label>Pick Your Cinema Avatar</label>
+            <div class="avatar-presets-grid" id="avatar-presets-container" style="margin-top: 6px;"></div>
+          </div>
 
-        .form-group label {  
-            display: block;  
-            margin-bottom: 8px;  
-            color: #fff;  
-            font-size: 1rem;  
-        }  
+          <button type="submit" class="auth-submit-btn" id="btn-submit-signup">
+            Create Free Account
+          </button>
+        </form>
 
-        .form-group input {  
-            width: 100%;  
-            padding: 12px;  
-            background: rgba(255, 255, 255, 0.1);  
-            border: none;  
-            border-radius: 5px;  
-            color: white;  
-            font-size: 1rem;  
-        }  
+        <div class="auth-card-footer">
+          Already have an account? <a href="./signin.html">Log In</a>
+        </div>
+      </div>
+    </main>
+  </div>
 
-        .form-group input:focus {  
-            outline: 2px solid rgb(252, 210, 24);  
-            background: rgba(255, 255, 255, 0.2);  
-        }  
+  <script>
+    let selectedAvatar = PsalmStrings.CONFIG.DEFAULT_AVATAR;
 
-        .submit-btn {  
-            width: 100%;  
-            padding: 15px;  
-            background: rgb(252, 210, 24);  
-            border: none;  
-            border-radius: 5px;  
-            font-size: 1.1rem;  
-            font-weight: bold;  
-            color: black;  
-            cursor: pointer;  
-            transition: background-color 0.3s ease;  
-        }  
+    document.addEventListener('DOMContentLoaded', function () {
+      const avatarGrid = document.getElementById('avatar-presets-container');
+      avatarGrid.innerHTML = PsalmStrings.CONFIG.AVATARS.map((p, i) => `
+        <div class="avatar-preset-item ${i === 0 ? 'selected' : ''}" data-url="${p.url}" title="${p.name}">
+          <img src="${p.url}" alt="${p.name}">
+        </div>
+      `).join('');
 
-        .submit-btn:hover {  
-            background: rgb(143, 117, 4);  
-        }  
+      avatarGrid.querySelectorAll('.avatar-preset-item').forEach(item => {
+        item.onclick = () => {
+          avatarGrid.querySelectorAll('.avatar-preset-item').forEach(x => x.classList.remove('selected'));
+          item.classList.add('selected');
+          selectedAvatar = item.getAttribute('data-url');
+        };
+      });
 
-        .auth-links {  
-            text-align: center;  
-            margin-top: 20px;  
-        }  
+      const form = document.getElementById('sign-up-form');
+      const errorBox = document.getElementById('auth-error-message');
+      const submitBtn = document.getElementById('btn-submit-signup');
 
-        .auth-links a {  
-            color: #ccc;  
-            text-decoration: none;  
-            margin: 0 10px;  
-            font-size: 1rem;  
-        }  
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorBox.style.display = 'none';
 
-        .auth-links a:hover {  
-            color: #E50914;  
-        }  
+        const name = document.getElementById('signup-fullname').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
 
-        /* Responsive Design */  
-        @media (max-width: 768px) {  
-            .header {  
-                padding: 20px;  
-                flex-direction: column;  
-                gap: 20px;  
-            }  
-            .form-title{
-                font-size: 24px;
-            }
-            .signup-form {  
-                padding: 20px;  
-            } 
-            .header button{
-                display: none;
-            } 
-        }  
-
-        /* Optional: Form Validation Error Styles */  
-        .error {  
-            color: #E50914;  
-            font-size: 18px;  
-            margin-top: 5px;  
-            /* display: none;   */
-        }  
-    </style>  
-</head>  
-<body>  
-    <header class="header">  
-        <div class="logo">PsalmStrings</div>  
-        <button>Sign In</button>  
-    </header>  
-    <main class="signup-container">  
-        <form class="signup-form" id="signUpForm">  
-            <h1 class="form-title">Create Your Account</h1>  
-            <div class="form-group">  
-                <label for="fullName">Full Name</label>  
-                <input type="text" id="fullName" name="fullName" placeholder="Enter your Full Name" required>  
-            </div>  
-
-            <div class="form-group">  
-                <label for="email">Email Address</label>  
-                <input type="email" id="email" name="email" placeholder="Enter your email address" required>  
-            </div>  
-
-            <div class="form-group">  
-                <label for="password">Password</label>  
-                <input type="password" id="password" name="password" placeholder="Create a password" required>  
-            </div>  
-
-            <div class="form-group">  
-                <label for="confirmPassword">Confirm Password</label>  
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>  
-            </div>  
-
-            <div class="form-group">  
-                <div id="errorP" class="error"></div>  
-            </div>  
-
-            <button type="submit" class="submit-btn" id="submitBTN">Sign Up</button>  
-
-            <div class="auth-links">  
-                <p>Already have an account? <a href="./signin.html">Log In</a></p>  
-            </div>  
-        </form>  
-    </main>  
-
-    <script type="module">  
-         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-         import { getFirestore, collection, setDoc, doc, } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-         import { getAuth, createUserWithEmailAndPassword, } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-
-        const firebaseConfig = {  
-            apiKey: "AIzaSyC5kROT39vzmZztR4k2BzYSL3PFlio1tUM",  
-            authDomain: "psalmstrings-7b9a9.firebaseapp.com",  
-            projectId: "psalmstrings-7b9a9",  
-            storageBucket: "psalmstrings-7b9a9.firebasestorage.app",  
-            messagingSenderId: "765832868823",  
-            appId: "1:765832868823:web:0dd6e79ee4d3acde041192",  
-            measurementId: "G-LV8DV0TC8E"  
-        };  
-
-         // Initialize Firebase
-         const app = initializeApp(firebaseConfig);
-        // Inititalize Auth
-        const auth = getAuth(app);
-        // Initialize Firestore
-        const db = getFirestore(app);
-        //Collection Reference(s)
-        const userColRef = collection(db, 'users');
-        
-        signUpForm.addEventListener("submit", createUserAccount)
-        async function createUserAccount(e) {   
-            try {
-                // spinner.classList.remove("d-none")
-                submitBTN.disabled = true
-                errorP.textContent = "";
-                e.preventDefault();         
-
-                const userDetails ={
-                name: signUpForm.fullName.value.trim(),
-                email: signUpForm.email.value.trim(),
-                password: signUpForm.password.value.trim(),
-                confirmPassword: signUpForm.confirmPassword.value.trim(),
-                // checkbox: signUpForm.checkbox.value,
-                // address: signUpForm.address.value.trim(),
-                }
-            let emailRegex =/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-            
-            if (!emailRegex.test(userDetails.email)) {
-                throw new Error("*Invalid email address");
-            }
-            if (userDetails.password.length < 6) {
-                throw new Error("*Password should be at least 6 character");
-            }
-            if (userDetails.password !== userDetails.confirmPassword) {
-                throw new Error("*Password does not match");
-            }
-            
-            const {password, confirmPassword, ...details} = userDetails
-            const res = await createUserWithEmailAndPassword(
-                auth,
-                details.email,
-                password
-            );
-            console.log(res);
-            const docRef = doc(userColRef, res.user.uid);
-            const docRes = await setDoc(docRef, details);
-            alert("Account created successfully!");
-            location.href = "../pages/signin.html"; 
-            } catch (error) {
-                if (error.message === "Firebase: Error (auth/email-already-in-use).") {
-                    errorP.textContent = "Email already exists!";
-                    return;
-                }
-                errorP.textContent = error.message;
-                console.log(error);
-                
-            }finally{
-                // spinner.classList.add("d-none");
-                submitBTN.disabled = false;
-            }
+        if (password.length < 6) {
+          errorBox.style.display = 'block';
+          errorBox.textContent = 'Password must be at least 6 characters long.';
+          return;
         }
-    </script>  
-</body>  
-</html>  
+
+        if (password !== confirmPassword) {
+          errorBox.style.display = 'block';
+          errorBox.textContent = 'Passwords do not match.';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+        try {
+          await PsalmStrings.auth.signUp(name, email, password, selectedAvatar);
+          PsalmStrings.ui.showToast('Account created successfully! Welcome to PsalmStrings.', 'success');
+          setTimeout(() => {
+            window.location.href = './homepage.html';
+          }, 600);
+        } catch (err) {
+          console.error("Signup error:", err);
+          errorBox.style.display = 'block';
+          if (err.code === 'auth/email-already-in-use') {
+            errorBox.textContent = 'This email is already registered. Please sign in instead.';
+          } else if (err.code === 'auth/invalid-email') {
+            errorBox.textContent = 'The email address is improperly formatted.';
+          } else {
+            errorBox.textContent = err.message || 'Failed to create account.';
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Free Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

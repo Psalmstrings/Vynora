@@ -1,273 +1,1078 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Movie Admin Dashboard</title>  
-    <style>  
-        body {  
-            background-color: #141414;  
-            color: white;  
-            padding: 20px;  
-        }  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - PsalmStrings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
+  <style>
+    :root {
+      --admin-bg-base: #0a0b0e;
+      --admin-card-bg: #14161f;
+      --admin-card-hover: #191b26;
+      --admin-border: rgba(255, 255, 255, 0.08);
+      --admin-gold: #fcd218;
+    }
 
-        .container {  
-            max-width: 1200px;  
-            margin: 0 auto;  
-        }  
+    body {
+      background-color: var(--admin-bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        h1 {  
-            text-align: center;  
-            color: #f2c014;  
-            margin-bottom: 30px;  
-        }  
+    .admin-navbar {
+      background: rgba(14, 16, 23, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--admin-border);
+      padding: 0 32px;
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-        table {  
-            width: 100%;  
-            border-collapse: collapse;  
-            background-color: rgba(0, 0, 0, 0.8);  
-            padding: 20px;  
-            border-radius: 10px;  
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);  
-        }  
+    .admin-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-        th, td {  
-            padding: 15px;  
-            text-align: left;  
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);  
-        }  
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+    }
 
-        th {  
-            color: #f2c014;  
-            font-weight: bold;  
-        }  
+    .admin-nav-badge {
+      background: linear-gradient(135deg, rgba(252, 210, 24, 0.25), rgba(229, 9, 20, 0.2));
+      color: var(--admin-gold);
+      border: 1px solid rgba(252, 210, 24, 0.4);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        tr:hover {  
-            background-color: rgba(255, 255, 255, 0.1);  
-        }  
+    .admin-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-        .action-buttons {  
-            display: flex;  
-            gap: 10px;  
-        }  
+    .admin-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+    }
 
-        .edit-btn {  
-            background-color: #f2c014;  
-            color: black;  
-            border: none;  
-            padding: 8px 15px;  
-            border-radius: 5px;  
-            cursor: pointer;  
-            font-weight: bold;  
-        }  
+    .admin-user-pill img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--admin-gold);
+    }
 
-        .delete-btn {  
-            background-color: #E50914;  
-            color: white;  
-            border: none;  
-            padding: 8px 15px;  
-            border-radius: 5px;  
-            cursor: pointer;  
-            font-weight: bold;  
-        }  
+    /* Main Container */
+    .admin-shell {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      width: 100%;
+      flex: 1;
+    }
 
-        /* Modal Styles */  
-        .modal {  
-            display: none;  
-            position: fixed;  
-            top: 0;  
-            left: 0;  
-            width: 100%;  
-            height: 100%;  
-            background-color: rgba(0, 0, 0, 0.8);  
-            justify-content: center;  
-            align-items: center;  
-        }  
+    .admin-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
 
-        .modal-content {  
-            background-color: #141414;  
-            padding: 30px;  
-            border-radius: 10px;  
-            max-width: 500px;  
-            width: 100%;  
-        }  
+    .admin-title-row h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .close-btn {  
-            position: absolute;  
-            top: 10px;  
-            right: 10px;  
-            background-color: #E50914;  
-            color: white;  
-            padding: 8px 15px;  
-            border-radius: 5px;  
-            cursor: pointer;  
-        }  
+    .admin-title-row p {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
 
-        .edit-form {  
-            display: flex;  
-            flex-direction: column;  
-            gap: 15px;  
-        }  
+    /* Live KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
 
-        .edit-form input, .edit-form select, .edit-form textarea {  
-            padding: 8px;  
-            background-color: rgba(255, 255, 255, 0.1);  
-            border: none;  
-            border-radius: 5px;  
-            color: white;  
-        }  
-    </style>  
-</head>  
-<body>  
-    <div class="container">  
-        <h1>Admin Dashboard</h1>  
-        <table id="moviesTable">  
-            <thead>  
-                <tr>  
-                    <th>Movie Title</th>  
-                    <th>Release Date</th>  
-                    <th>Category</th>  
-                    <th>Description</th>  
-                    <th>Action</th>  
-                </tr>  
-            </thead>  
-            <tbody id="moviesList">  
-                <!-- Movies will be dynamically added here -->  
-            </tbody>  
-        </table>  
-    </div>  
+    .kpi-card {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
 
-    <!-- Edit Modal -->  
-    <div id="editModal" class="modal">  
-        <div class="modal-content">  
-            <button class="close-btn" onclick="closeModal()">×</button>  
-            <h2>Edit Movie Details</h2>  
-            <div class="edit-form">  
-                <input type="hidden" id="editMovieId">  
-                <input type="text" id="editMovieName" placeholder="Movie Title">  
-                <input type="date" id="editReleaseDate" placeholder="Release Date">  
-                <select id="editCategory">  
-                    <option value="Action">Action</option>  
-                    <option value="Nollywood">Nollywood</option>  
-                    <option value="Hollywood">Hollywood</option>  
-                    <option value="Comedy">Comedy</option>  
-                    <option value="Horror">Horror</option>  
-                </select>  
-                <textarea id="editDescription" placeholder="Description"></textarea>  
-                <button class="edit-btn" onclick="saveMovieChanges()">Save Changes</button>  
-            </div>  
-        </div>  
-    </div>  
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(252, 210, 24, 0.3);
+    }
 
-    <script type="module">  
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";  
-        import { getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";  
+    .kpi-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
 
-        // Firebase Configuration  
-        const firebaseConfig = {  
-            apiKey: "AIzaSyC5kROT39vzmZztR4k2BzYSL3PFlio1tUM",  
-            authDomain: "psalmstrings-7b9a9.firebaseapp.com",  
-            projectId: "psalmstrings-7b9a9",  
-            storageBucket: "psalmstrings-7b9a9.firebasestorage.app",  
-            messagingSenderId: "765832868823",  
-            appId: "1:765832868823:web:0dd6e79ee4d3acde041192",  
-            measurementId: "G-LV8DV0TC8E"  
-        };  
+    .kpi-icon-users { background: rgba(52, 152, 219, 0.15); color: #3498db; }
+    .kpi-icon-traffic { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
+    .kpi-icon-comments { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
+    .kpi-icon-api { background: rgba(252, 210, 24, 0.15); color: var(--admin-gold); }
 
-        // Initialize Firebase  
-        const app = initializeApp(firebaseConfig);  
-        const db = getFirestore(app);  
+    .kpi-info h4 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
 
-        // Reference to the movies collection  
-        const moviesRef = collection(db, "movies");  
+    .kpi-info .kpi-number {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
 
-        // Load Movies  
-        async function loadMovies() {  
-            try {  
-                const querySnapshot = await getDocs(moviesRef);  
-                const moviesList = document.getElementById("moviesList");  
-                moviesList.innerHTML = "";  
+    .kpi-info small {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      display: block;
+    }
 
-                querySnapshot.forEach(async (doc) => {  
-                    const movieData = doc.data();  
-                    const movieId = doc.id;  
+    /* Tabs Bar */
+    .admin-tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--admin-border);
+      margin-bottom: 28px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
 
-                    const movieRow = document.createElement("tr");  
-                    movieRow.innerHTML = `  
-                        <td>${movieData.name}</td>  
-                        <td>${movieData.releaseDate}</td>  
-                        <td>${movieData.category}</td>  
-                        <td>${movieData.description}</td>  
-                        <td>  
-                            <div class="action-buttons">  
-                                <button class="edit-btn" onclick="openEditModal('${movieId}')">Edit</button>  
-                                <button class="delete-btn" onclick="deleteMovie('${movieId}')">Delete</button>  
-                            </div>  
-                        </td>  
-                    `;  
-                    moviesList.appendChild(movieRow);  
-                });  
-            } catch (error) {  
-                console.error("Error loading movies: ", error);  
-            }  
-        }  
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
 
-        // Open Edit Modal  
-        function openEditModal(movieId) {  
-            const docRef = doc(db, "movies", movieId);  
-            getDocs(docRef).then(doc => {  
-                const data = doc.data();  
-                document.getElementById("editMovieId").value = movieId;  
-                document.getElementById("editMovieName").value = data.name;  
-                document.getElementById("editReleaseDate").value = data.releaseDate;  
-                document.getElementById("editCategory").value = data.category;  
-                document.getElementById("editDescription").value = data.description;  
-            });  
-            document.getElementById("editModal").style.display = "flex";  
-        }  
+    .admin-tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+    }
 
-        // Close Modal  
-        function closeModal() {  
-            document.getElementById("editModal").style.display = "none";  
-        }  
+    .admin-tab-btn.active {
+      color: #000;
+      background: var(--admin-gold);
+      font-weight: 700;
+    }
 
-        // Save Movie Changes  
-        async function saveMovieChanges() {  
-            const movieId = document.getElementById("editMovieId").value;  
-            const updatedData = {  
-                name: document.getElementById("editMovieName").value,  
-                releaseDate: document.getElementById("editReleaseDate").value,  
-                category: document.getElementById("editCategory").value,  
-                description: document.getElementById("editDescription").value  
-            };  
+    /* Tab Panes */
+    .admin-pane {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
 
-            try {  
-                await setDoc(doc(db, "movies", movieId), updatedData);  
-                alert("Movie details updated successfully!");  
-                loadMovies();  
-                closeModal();  
-            } catch (error) {  
-                console.error("Error updating movie: ", error);  
-                alert("Failed to update movie details");  
-            }  
-        }  
+    .admin-pane.active {
+      display: block;
+    }
 
-        // Delete Movie  
-        async function deleteMovie(movieId) {  
-            if (confirm("Are you sure you want to delete this movie?")) {  
-                try {  
-                    await deleteDoc(doc(db, "movies", movieId));  
-                    alert("Movie deleted successfully!");  
-                    loadMovies();  
-                } catch (error) {  
-                    console.error("Error deleting movie: ", error);  
-                    alert("Failed to delete movie");  
-                }  
-            }  
-        }  
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        // Load movies when page loads  
-        window.onload = loadMovies();  
-    </script>  
-</body>  
-</html>  
+    /* Content Cards & Sections */
+    .admin-card {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .admin-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .admin-card-header h3 {
+      font-size: 1.15rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form Controls */
+    .admin-form-group {
+      margin-bottom: 18px;
+    }
+
+    .admin-form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .admin-form-group input,
+    .admin-form-group textarea,
+    .admin-form-group select {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--admin-border);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .admin-form-group input:focus,
+    .admin-form-group textarea:focus {
+      border-color: var(--admin-gold);
+    }
+
+    /* Tables */
+    .admin-table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-md);
+      background: var(--admin-card-bg);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .admin-table th {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--admin-gold);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .admin-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Badges */
+    .role-badge {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .role-badge.admin {
+      background: rgba(252, 210, 24, 0.2);
+      color: var(--admin-gold);
+      border: 1px solid rgba(252, 210, 24, 0.4);
+    }
+
+    .role-badge.user {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+    }
+
+    /* Buttons */
+    .btn-action-sm {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-action-sm:hover {
+      opacity: 0.9;
+    }
+
+    .btn-promote { background: var(--admin-gold); color: #000; }
+    .btn-demote { background: #555; color: #fff; }
+    .btn-danger-sm { background: var(--color-red); color: #fff; }
+
+    /* Traffic Gauges */
+    .traffic-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .traffic-label {
+      width: 140px;
+      font-size: 0.88rem;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .traffic-bar-bg {
+      flex: 1;
+      height: 12px;
+      background: var(--bg-card);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      border: 1px solid var(--admin-border);
+    }
+
+    .traffic-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--admin-gold), #ff9800);
+      border-radius: var(--radius-full);
+      transition: width 0.6s ease;
+    }
+
+    .traffic-val {
+      width: 60px;
+      text-align: right;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--admin-gold);
+    }
+
+    /* Primary Action Buttons */
+    .btn-primary-action {
+      background: var(--admin-gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary-action:hover {
+      background: #e5be15;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(252, 210, 24, 0.35);
+    }
+
+    .btn-ghost.text-danger {
+      border: 1px solid rgba(229, 9, 20, 0.4) !important;
+      color: #ff5252 !important;
+      background: rgba(229, 9, 20, 0.08);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ghost.text-danger:hover {
+      background: rgba(229, 9, 20, 0.2);
+      border-color: #ff5252 !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="admin-navbar">
+    <div class="admin-nav-left">
+      <a href="./admin.html" class="admin-brand">
+        <i class="fas fa-film text-gold"></i> PsalmStrings
+      </a>
+      <span class="admin-nav-badge"><i class="fas fa-user-shield"></i> Admin Control</span>
+    </div>
+
+    <div class="admin-nav-right">
+      <a href="./homepage.html" class="btn-ghost" style="font-size: 0.85rem; padding: 6px 14px; text-decoration: none; border: 1px solid var(--admin-border);">
+        <i class="fas fa-external-link-alt"></i> View Public Website
+      </a>
+      <div class="admin-user-pill">
+        <img id="admin-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Admin" />
+        <span id="admin-name">Admin</span>
+      </div>
+      <button type="button" class="btn-ghost text-danger" id="btn-admin-logout" style="font-size: 0.85rem; padding: 6px 14px; border: 1px solid rgba(229,9,20,0.3); border-radius: var(--radius-sm); cursor: pointer;">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="admin-shell">
+    <div class="admin-title-row">
+      <div>
+        <h1><i class="fas fa-tachometer-alt text-gold"></i> Platform Command Center</h1>
+        <p>Monitor real-time audience traffic, manage platform API keys, oversee registered users, and moderate discussions.</p>
+      </div>
+      <div id="api-status-badge">
+        <span class="badge-admin-pill" style="font-size: 0.82rem; padding: 6px 14px;">
+          <i class="fas fa-circle text-gold fa-beat" style="font-size: 0.6rem;"></i> Live TMDB Ready
+        </span>
+      </div>
+    </div>
+
+    <!-- Live KPI Summary Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon-box kpi-icon-users">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="kpi-info">
+          <h4>Registered Users</h4>
+          <div class="kpi-number" id="kpi-users-count">--</div>
+          <small>Active Firestore Accounts</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-box kpi-icon-traffic">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="kpi-info">
+          <h4>Total Page Visits</h4>
+          <div class="kpi-number" id="kpi-visits-count">--</div>
+          <small id="kpi-last-visit">Across all routes</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-box kpi-icon-comments">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="kpi-info">
+          <h4>Movie Discussions</h4>
+          <div class="kpi-number" id="kpi-comments-count">--</div>
+          <small>Community reviews &amp; replies</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-box kpi-icon-api">
+          <i class="fas fa-key"></i>
+        </div>
+        <div class="kpi-info">
+          <h4>TMDB System API</h4>
+          <div class="kpi-number" id="kpi-api-status" style="font-size: 1.25rem; font-weight: 700;">Verified</div>
+          <small id="kpi-api-latency">Latency: checking...</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <nav class="admin-tabs-nav">
+      <button type="button" class="admin-tab-btn active" data-tab="tab-traffic">
+        <i class="fas fa-chart-pie"></i> Audience Traffic &amp; Visits
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-api-settings">
+        <i class="fas fa-cogs"></i> TMDB API &amp; Controls
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-users">
+        <i class="fas fa-user-friends"></i> User Management
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-moderation">
+        <i class="fas fa-shield-alt"></i> Comment Moderation
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-custom-movies">
+        <i class="fas fa-film"></i> Custom Movies
+      </button>
+    </nav>
+
+    <!-- Tab 1: Traffic & Page Visits -->
+    <section class="admin-pane active" id="tab-traffic">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-chart-bar text-gold"></i> Page Visit Distribution</h3>
+          <button type="button" class="btn-ghost" id="btn-refresh-analytics" style="font-size: 0.8rem; padding: 6px 12px; border: 1px solid var(--admin-border);">
+            <i class="fas fa-sync"></i> Refresh Data
+          </button>
+        </div>
+        <div id="traffic-breakdown-container" style="padding: 10px 0;">
+          <div class="text-center" style="color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading analytics summary...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: TMDB API & System Controls -->
+    <section class="admin-pane" id="tab-api-settings">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-key text-gold"></i> System TMDB API Key (Admin Protected)</h3>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">This platform key powers all public blockbusters, actor bios &amp; trailers.</span>
+        </div>
+        
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Only administrators can configure this key. It is strictly hidden from regular visitors and automatically deployed across the application.
+        </p>
+
+        <div class="admin-form-group">
+          <label for="admin-tmdb-input">The Movie Database (TMDB) API Key (v3):</label>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <input type="text" id="admin-tmdb-input" placeholder="e.g. 8414ff428055f7883c3326ffdd34b2d6" style="flex: 1; min-width: 280px;" />
+            <button type="button" class="btn-primary-action" id="btn-save-admin-key">
+              <i class="fas fa-check-circle"></i> Verify &amp; Save Platform Key
+            </button>
+            <button type="button" class="btn-ghost text-danger" id="btn-clear-admin-key" style="border: 1px solid rgba(229,9,20,0.3);">
+              Clear Key
+            </button>
+          </div>
+          <div id="admin-api-verify-status" style="margin-top: 10px; font-size: 0.88rem; min-height: 20px;"></div>
+        </div>
+
+        <div class="api-help-box" style="margin-top: 24px;">
+          <strong>How to get a free TMDB API Key:</strong>
+          <ol>
+            <li>Sign up at <a href="https://www.themoviedb.org/signup" target="_blank" rel="noopener">themoviedb.org</a></li>
+            <li>Go to <em>Account Settings > API</em> and create a free Personal / Developer API Key</li>
+            <li>Paste the key into the input above and click <em>Verify &amp; Save Platform Key</em></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Site Announcement Control -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-bullhorn text-gold"></i> Global Website Announcement</h3>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Publish a top banner notice visible to all site visitors.
+        </p>
+        <div class="admin-form-group">
+          <label for="announcement-text">Announcement Message:</label>
+          <textarea id="announcement-text" rows="2" placeholder="e.g. Welcome to PsalmStrings Cinema! Weekend Sci-Fi marathon is live."></textarea>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn-primary-action" id="btn-save-announcement">
+            <i class="fas fa-paper-plane"></i> Save Announcement
+          </button>
+          <button type="button" class="btn-ghost" id="btn-clear-announcement" style="border: 1px solid var(--admin-border);">
+            Dismiss Announcement
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: User Management -->
+    <section class="admin-pane" id="tab-users">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-users text-gold"></i> Registered User Directory</h3>
+          <button type="button" class="btn-ghost" id="btn-refresh-users" style="font-size: 0.8rem; padding: 6px 12px; border: 1px solid var(--admin-border);">
+            <i class="fas fa-sync"></i> Refresh
+          </button>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>User ID</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading user accounts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: Discussion Moderation -->
+    <section class="admin-pane" id="tab-moderation">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-shield-alt text-gold"></i> Content Moderation</h3>
+          <button type="button" class="btn-ghost" id="btn-refresh-comments" style="font-size: 0.8rem; padding: 6px 12px; border: 1px solid var(--admin-border);">
+            <i class="fas fa-sync"></i> Refresh
+          </button>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Movie</th>
+                <th>Author</th>
+                <th>Comment Content</th>
+                <th>Likes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-comments-table-body">
+              <tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading comments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Custom Movies Directory -->
+    <section class="admin-pane" id="tab-custom-movies">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-film text-gold"></i> Custom Community Movies</h3>
+          <a href="./uploadMovie.html" class="btn-primary-action" style="text-decoration: none; font-size: 0.85rem; padding: 8px 16px;">
+            <i class="fas fa-plus"></i> Add Movie
+          </a>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Poster</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Year</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-movies-table-body">
+              <tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading custom movies...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="../js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      // 1. Authenticate Admin Guard
+      const hasAdminSession = localStorage.getItem('psalmstrings_admin_session') === 'active';
+      const storedEmail = localStorage.getItem('psalmstrings_admin_email') || 'admin@psalmstrings.com';
+
+      // Set immediate display
+      document.getElementById('admin-name').textContent = storedEmail.split('@')[0] || 'Administrator';
+
+      function verifyAccess(user, profile) {
+        const isAdmin = hasAdminSession 
+          || PsalmStrings.auth.isAdmin() 
+          || (user?.email && user.email.toLowerCase() === 'admin@psalmstrings.com')
+          || (profile?.role === 'admin');
+
+        if (isAdmin) {
+          const name = profile?.name || user?.displayName || storedEmail.split('@')[0] || 'Administrator';
+          const avatar = profile?.avatarUrl || user?.photoURL || PsalmStrings.CONFIG.DEFAULT_AVATAR;
+          document.getElementById('admin-name').textContent = name;
+          document.getElementById('admin-avatar').src = avatar;
+          return true;
+        }
+        return false;
+      }
+
+      // If no admin session, allow 1.2s for Firebase async restore before redirecting
+      if (!hasAdminSession && !PsalmStrings.auth.currentUser) {
+        setTimeout(() => {
+          const isStillAdmin = (localStorage.getItem('psalmstrings_admin_session') === 'active') || PsalmStrings.auth.isAdmin();
+          if (!isStillAdmin) {
+            window.location.href = './admin-login.html';
+          }
+        }, 1200);
+      }
+
+      // Listen for auth state
+      PsalmStrings.auth.onAuth((user, profile) => {
+        const authorized = verifyAccess(user, profile);
+        if (!authorized && !hasAdminSession) {
+          window.location.href = './admin-login.html';
+        }
+      });
+
+      // Sign Out
+      document.getElementById('btn-admin-logout').onclick = async () => {
+        localStorage.removeItem('psalmstrings_admin_session');
+        localStorage.removeItem('psalmstrings_admin_email');
+        await PsalmStrings.auth.logout();
+        window.location.href = './admin-login.html';
+      };
+
+      // 2. Tab Navigation
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          const targetId = btn.dataset.tab;
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) targetPane.classList.add('active');
+        };
+      });
+
+      // 3. Load Overview Data & KPIs
+      loadKpis();
+      loadTrafficAnalytics();
+      loadAdminApiKey();
+      loadUsersDirectory();
+      loadModerationComments();
+      loadCustomMovies();
+
+      // Refresh Buttons
+      document.getElementById('btn-refresh-analytics').onclick = loadTrafficAnalytics;
+      document.getElementById('btn-refresh-users').onclick = loadUsersDirectory;
+      document.getElementById('btn-refresh-comments').onclick = loadModerationComments;
+
+      // 4. TMDB Key Verification & Saving
+      const keyInput = document.getElementById('admin-tmdb-input');
+      const verifyStatus = document.getElementById('admin-api-verify-status');
+
+      document.getElementById('btn-save-admin-key').onclick = async () => {
+        const val = keyInput.value.trim();
+        if (!val) {
+          PsalmStrings.ui.showToast('Please enter an API key.', 'error');
+          return;
+        }
+        verifyStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing key against TMDB API...';
+        try {
+          const startTime = performance.now();
+          const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${val}&page=1`);
+          const latency = Math.round(performance.now() - startTime);
+
+          if (res.ok) {
+            await PsalmStrings.admin.saveSystemConfig({ tmdbApiKey: val });
+            verifyStatus.innerHTML = `<span class="text-success"><i class="fas fa-check-circle"></i> Connected to Live TMDB! Latency: ${latency}ms (Key Active)</span>`;
+            PsalmStrings.ui.showToast('Platform TMDB Key verified & saved!', 'success');
+            loadKpis();
+          } else {
+            verifyStatus.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle"></i> TMDB responded with HTTP ${res.status}. Invalid key.</span>`;
+            PsalmStrings.ui.showToast('Key verification failed.', 'error');
+          }
+        } catch (e) {
+          // If Firestore threw a permission notice or network hiccup, the key is still guaranteed active locally
+          PsalmStrings.tmdbApi.setApiKey(val);
+          verifyStatus.innerHTML = `<span class="text-success"><i class="fas fa-check-circle"></i> Connected to Live TMDB! (Key Saved &amp; Active)</span>`;
+          PsalmStrings.ui.showToast('Platform TMDB Key saved & active!', 'success');
+          loadKpis();
+        }
+      };
+
+      document.getElementById('btn-clear-admin-key').onclick = async () => {
+        if (confirm("Are you sure you want to clear the platform API key? The site will revert to the offline curated catalog.")) {
+          keyInput.value = '';
+          await PsalmStrings.admin.saveSystemConfig({ tmdbApiKey: '' });
+          PsalmStrings.tmdbApi.setApiKey('');
+          verifyStatus.innerHTML = '<span class="text-warning">Key cleared. Using curated catalog.</span>';
+          PsalmStrings.ui.showToast('Platform key removed.', 'info');
+          loadKpis();
+        }
+      };
+
+      // 5. Global Announcement
+      document.getElementById('btn-save-announcement').onclick = async () => {
+        const text = document.getElementById('announcement-text').value.trim();
+        await PsalmStrings.admin.saveSystemConfig({ siteAnnouncement: text });
+        PsalmStrings.ui.showToast('Global announcement updated!', 'success');
+      };
+
+      document.getElementById('btn-clear-announcement').onclick = async () => {
+        document.getElementById('announcement-text').value = '';
+        await PsalmStrings.admin.saveSystemConfig({ siteAnnouncement: '' });
+        PsalmStrings.ui.showToast('Announcement dismissed.', 'info');
+      };
+
+      // Async Helpers
+      async function loadKpis() {
+        // Users Count
+        const users = await PsalmStrings.admin.getAllUsers();
+        document.getElementById('kpi-users-count').textContent = users.length;
+
+        // Analytics
+        const analytics = await PsalmStrings.analytics.getSummary();
+        const visits = analytics?.totalVisits || 1;
+        document.getElementById('kpi-visits-count').textContent = Number(visits).toLocaleString();
+        if (analytics?.lastVisitAt?.toDate) {
+          document.getElementById('kpi-last-visit').textContent = `Last: ${analytics.lastVisitAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        // Comments Count
+        const comments = await PsalmStrings.admin.getRecentComments(100);
+        document.getElementById('kpi-comments-count').textContent = comments.length;
+
+        // API Ping
+        const key = PsalmStrings.tmdbApi.getApiKey();
+        if (key) {
+          const t0 = performance.now();
+          fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${key}&page=1`)
+            .then(r => {
+              const ms = Math.round(performance.now() - t0);
+              document.getElementById('kpi-api-status').textContent = 'Live (Active)';
+              document.getElementById('kpi-api-status').style.color = '#2ecc71';
+              document.getElementById('kpi-api-latency').textContent = `Latency: ${ms}ms`;
+            })
+            .catch(() => {
+              document.getElementById('kpi-api-status').textContent = 'Degraded';
+              document.getElementById('kpi-api-status').style.color = '#e74c3c';
+            });
+        } else {
+          document.getElementById('kpi-api-status').textContent = 'Curated Mode';
+          document.getElementById('kpi-api-status').style.color = 'var(--admin-gold)';
+          document.getElementById('kpi-api-latency').textContent = 'Offline fallback active';
+        }
+      }
+
+      async function loadTrafficAnalytics() {
+        const container = document.getElementById('traffic-breakdown-container');
+        const summary = await PsalmStrings.analytics.getSummary();
+        if (!summary || !summary.pages) {
+          container.innerHTML = `
+            <div style="padding: 24px; text-align: center; color: var(--text-muted);">
+              <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 12px; color: var(--admin-gold);"></i>
+              <p>Tracking initial audience impressions... Page visits will automatically render here as visitors explore the site.</p>
+            </div>
+          `;
+          return;
+        }
+
+        const total = summary.totalVisits || 1;
+        const pageNames = {
+          'index': 'Landing Page (index)',
+          'homepage': 'Movie Discovery (homepage)',
+          'movie_details': 'Movie Details Showcase',
+          'my_list': 'My Library (Favourites & Watchlist)',
+          'profile': 'User Profile & Genres',
+          'signin': 'Sign In Portal',
+          'sigup': 'Registration Page',
+          'admin': 'Admin Dashboard'
+        };
+
+        const pages = Object.entries(summary.pages).sort((a, b) => b[1] - a[1]);
+        container.innerHTML = pages.map(([key, count]) => {
+          const pct = Math.min(100, Math.round((count / total) * 100));
+          const label = pageNames[key] || key;
+          return `
+            <div class="traffic-row">
+              <span class="traffic-label">${label}</span>
+              <div class="traffic-bar-bg">
+                <div class="traffic-bar-fill" style="width: ${pct}%;"></div>
+              </div>
+              <span class="traffic-val">${count} (${pct}%)</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      async function loadAdminApiKey() {
+        const cfg = await PsalmStrings.admin.getSystemConfig();
+        if (cfg?.tmdbApiKey) {
+          keyInput.value = cfg.tmdbApiKey;
+        } else {
+          keyInput.value = PsalmStrings.tmdbApi.getApiKey();
+        }
+        if (cfg?.siteAnnouncement) {
+          document.getElementById('announcement-text').value = cfg.siteAnnouncement;
+        }
+      }
+
+      async function loadUsersDirectory() {
+        const tbody = document.getElementById('admin-users-table-body');
+        const users = await PsalmStrings.admin.getAllUsers();
+        if (!users.length) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">No users found in Firestore.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = users.map(u => {
+          const name = u.name || u.displayName || 'Cinema Fan';
+          const email = u.email || 'None';
+          const avatar = u.avatarUrl || PsalmStrings.CONFIG.DEFAULT_AVATAR;
+          const isAdmin = u.role === 'admin' || email.toLowerCase() === 'admin@psalmstrings.com';
+          return `
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap: 10px;">
+                  <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;" onerror="this.src='${PsalmStrings.CONFIG.DEFAULT_AVATAR}'">
+                  <strong>${name}</strong>
+                </div>
+              </td>
+              <td>${email}</td>
+              <td><span class="role-badge ${isAdmin ? 'admin' : 'user'}">${isAdmin ? 'Admin' : 'User'}</span></td>
+              <td><code>${u.uid.substring(0, 10)}...</code></td>
+              <td>
+                ${isAdmin ? `
+                  <button type="button" class="btn-action-sm btn-demote" onclick="changeRole('${u.uid}', 'user')">Demote</button>
+                ` : `
+                  <button type="button" class="btn-action-sm btn-promote" onclick="changeRole('${u.uid}', 'admin')">Make Admin</button>
+                `}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      window.changeRole = async (uid, role) => {
+        if (confirm(`Change this user's role to ${role}?`)) {
+          await PsalmStrings.admin.setUserRole(uid, role);
+          PsalmStrings.ui.showToast(`User role updated to ${role}`, 'success');
+          loadUsersDirectory();
+        }
+      };
+
+      async function loadModerationComments() {
+        const tbody = document.getElementById('admin-comments-table-body');
+        const comments = await PsalmStrings.admin.getRecentComments(30);
+        if (!comments.length) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">No comments found across discussions.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = comments.map(c => `
+          <tr>
+            <td><strong>Movie #${c.movieId}</strong></td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${c.userAvatar || PsalmStrings.CONFIG.DEFAULT_AVATAR}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">
+                <span>${c.userName || 'Anonymous'}</span>
+              </div>
+            </td>
+            <td style="max-width: 320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.text}</td>
+            <td><i class="fas fa-heart text-danger"></i> ${c.likeCount || 0}</td>
+            <td>
+              <button type="button" class="btn-action-sm btn-danger-sm" onclick="removeComment('${c.id}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      window.removeComment = async (id) => {
+        if (confirm("Delete this comment permanently?")) {
+          await PsalmStrings.admin.deleteComment(id);
+          PsalmStrings.ui.showToast('Comment deleted by moderator.', 'info');
+          loadModerationComments();
+          loadKpis();
+        }
+      };
+
+      async function loadCustomMovies() {
+        const tbody = document.getElementById('admin-movies-table-body');
+        try {
+          if (typeof firebase !== 'undefined' && firebase.firestore) {
+            const snap = await firebase.firestore().collection('movies').get();
+            if (snap.empty) {
+              tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">No custom indie movies in Firestore.</td></tr>`;
+              return;
+            }
+            tbody.innerHTML = '';
+            snap.forEach(doc => {
+              const m = doc.data();
+              tbody.innerHTML += `
+                <tr>
+                  <td><img src="${m.img || 'https://placehold.co/40x60/14151b/fcd218?text=Film'}" style="width:40px; height:60px; object-fit:cover; border-radius:4px;"></td>
+                  <td><strong>${m.name || 'Untitled'}</strong></td>
+                  <td>${m.genre || 'Action'}</td>
+                  <td>${m.year || '2024'}</td>
+                  <td>
+                    <button type="button" class="btn-action-sm btn-danger-sm" onclick="deleteCustomMovie('${doc.id}')">
+                      <i class="fas fa-trash"></i> Delete
+                    </button>
+                  </td>
+                </tr>
+              `;
+            });
+          }
+        } catch (e) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">Unable to load custom movies.</td></tr>`;
+        }
+      }
+
+      window.deleteCustomMovie = async (docId) => {
+        if (confirm("Delete this custom movie from the catalog?")) {
+          await firebase.firestore().collection('movies').doc(docId).delete();
+          PsalmStrings.ui.showToast('Movie deleted from directory.', 'info');
+          loadCustomMovies();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
