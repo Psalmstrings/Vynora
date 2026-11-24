@@ -3,18 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PsalmStrings - Discover, Recommend & Discuss Movies</title>
+  <title>Vynora - Discover, Recommend &amp; Discuss Movies</title>
+  <meta name="description" content="Vynora is a modern movie discovery platform featuring live trending blockbusters, personalized recommendations, HD trailers, and passionate community discussions." />
+  
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#FCD218" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vynora" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+  <link rel="alternate icon" href="./assets/icons/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="./css/common.css" />
   <link rel="stylesheet" href="./css/index.css" />
-  <link rel="shortcut icon" href="./media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
 
   <!-- Firebase Compat SDK (Compatible with file:// and http/https) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <!-- PsalmStrings Core Application Library -->
+  <!-- Vynora Core Application Library -->
   <script src="./js/app.js"></script>
 </head>
 <body>
@@ -22,7 +36,7 @@
   <header class="site-header">
     <div class="header-left">
       <a href="./index.html" class="site-logo">
-        <i class="fas fa-film"></i> PsalmStrings
+        <img src="./assets/icons/logo-header.svg" alt="Vynora" class="brand-logo-img" />
       </a>
       <nav class="nav-links-main">
         <a href="./pages/homepage.html">Explore Movies</a>
@@ -139,7 +153,7 @@
       <p>Join our community of movie lovers today. Create your account in seconds and unlock personalized recommendations.</p>
       <div class="landing-cta-group">
         <a href="./pages/sigup.html" class="btn-landing-primary">
-          <i class="fas fa-ticket-alt"></i> Join PsalmStrings Free
+          <i class="fas fa-ticket-alt"></i> Join Vynora Free
         </a>
       </div>
     </div>
@@ -149,8 +163,8 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <h4>PsalmStrings</h4>
-        <p>Your ultimate destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
+        <img src="./assets/icons/logo-header.svg" alt="Vynora" style="height: 34px; margin-bottom: 12px;" />
+        <p>Your premier destination for discovering blockbusters, exploring smart personalized recommendations, and sharing cinematic thoughts with movie enthusiasts worldwide.</p>
       </div>
       <div class="footer-col">
         <h5>Explore</h5>
@@ -167,7 +181,7 @@
           <li><a href="./pages/my-list.html?tab=favourites">My Favourites</a></li>
           <li><a href="./pages/my-list.html?tab=watchlist">My Watchlist</a></li>
           <li><a href="./pages/profile.html">Genre Preferences</a></li>
-          <li><a href="./pages/admin-login.html"><i class="fas fa-lock" style="font-size:0.75rem;"></i> Admin Portal</a></li>
+          <!-- <li><a href="./pages/admin-login.html"><i class="fas fa-lock" style="font-size:0.75rem;"></i> Admin Portal</a></li> -->
         </ul>
       </div>
       <div class="footer-col">
@@ -180,8 +194,8 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025-2026 PsalmStrings. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
-      <p>Built with vanilla web technologies (HTML5, CSS3, Vanilla JS).</p>
+      <p>&copy; 2025-2026 Vynora Cinema Platform. All rights reserved. Data provided by TMDB. Powered by Firebase.</p>
+      <p>Progressive Web App (PWA) enabled &bull; Built with HTML5, CSS3, Vanilla JS.</p>
     </div>
   </footer>
 
@@ -189,17 +203,17 @@
   <script>
     document.addEventListener('DOMContentLoaded', async function () {
       // 1. Search Autocomplete
-      PsalmStrings.ui.initSearch('landing-search-input', 'landing-search-results');
+      Vynora.ui.initSearch('landing-search-input', 'landing-search-results');
 
       // 2. Carousel navigation
-      PsalmStrings.ui.setupCarousel('landing-trending-slider', 'btn-prev-landing-trending', 'btn-next-landing-trending');
+      Vynora.ui.setupCarousel('landing-trending-slider', 'btn-prev-landing-trending', 'btn-next-landing-trending');
 
       // 3. Load Trending Movies
       const slider = document.getElementById('landing-trending-slider');
-      const movies = await PsalmStrings.tmdbApi.getTrending('week');
+      const movies = await Vynora.tmdbApi.getTrending('week');
       slider.innerHTML = '';
       movies.forEach(function (m) {
-        slider.appendChild(PsalmStrings.ui.createMovieCard(m));
+        slider.appendChild(Vynora.ui.createMovieCard(m));
       });
     });
   </script>

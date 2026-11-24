@@ -3,25 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Portal - PsalmStrings</title>
+  <title>Admin Portal - Vynora</title>
+  <meta name="description" content="Administrative control portal for Vynora platform." />
+
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#FCD218" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vynora" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+  <link rel="alternate icon" href="../assets/icons/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/auth.css" />
-  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
 
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <!-- PsalmStrings Core Application Library -->
+  <!-- Vynora Core Application Library -->
   <script src="../js/app.js"></script>
 </head>
 <body>
   <div class="auth-page-wrapper">
     <header class="auth-header">
       <a href="./homepage.html" class="site-logo">
-        <i class="fas fa-film"></i> PsalmStrings
+        <img src="../assets/icons/logo-header.svg" alt="Vynora" class="brand-logo-img" />
       </a>
       <a href="./homepage.html" class="btn-nav-signin" style="text-decoration:none;">
         <i class="fas fa-arrow-left"></i> Return to Site
@@ -52,7 +66,7 @@
         <form id="admin-signin-form">
           <div class="auth-form-group">
             <label for="admin-email">Admin Email Address</label>
-            <input type="email" id="admin-email" placeholder="admin@psalmstrings.com" required autocomplete="email" />
+            <input type="email" id="admin-email" placeholder="admin@vynora.com" required autocomplete="email" />
           </div>
 
           <div class="auth-form-group">
@@ -71,7 +85,7 @@
             </label>
             <input type="password" id="admin-master-pin" placeholder="Enter owner passcode" autocomplete="off" />
             <div class="admin-pin-hint">
-              Enter <code>psalm-admin-2026</code> to authorize or auto-elevate this administrator account.
+              Enter <code>vynora-admin-2026</code> or <code>psalm-admin-2026</code> to authorize or auto-elevate this administrator account.
             </div>
           </div>
 
@@ -108,8 +122,8 @@
       };
 
       // Check existing session
-      if (localStorage.getItem('psalmstrings_admin_session') === 'active') {
-        const email = localStorage.getItem('psalmstrings_admin_email') || 'admin@psalmstrings.com';
+      if (localStorage.getItem('vynora_admin_session') === 'active' || localStorage.getItem('psalmstrings_admin_session') === 'active') {
+        const email = localStorage.getItem('vynora_admin_email') || localStorage.getItem('psalmstrings_admin_email') || 'admin@vynora.com';
         emailInput.value = email;
       }
 
@@ -123,21 +137,21 @@
         const email = emailInput.value.trim();
         const pwd = pwdInput.value;
         const pin = pinInput.value.trim();
-        const isMasterKey = (pin === 'psalm-admin-2026');
+        const isMasterKey = (pin === 'vynora-admin-2026' || pin === 'psalm-admin-2026');
 
         try {
           let user = null;
 
           // Attempt normal login
           try {
-            user = await PsalmStrings.auth.login(email, pwd);
+            user = await Vynora.auth.login(email, pwd);
           } catch (loginErr) {
             console.warn("Login attempt notice:", loginErr.code);
 
             // If master passcode is provided, auto-create the admin user if account does not exist
             if (isMasterKey) {
               try {
-                user = await PsalmStrings.auth.signUp('Administrator', email, pwd);
+                user = await Vynora.auth.signUp('Administrator', email, pwd);
               } catch (signUpErr) {
                 // If email already exists, credentials may have mistyped password; with master key we still grant local admin session
                 console.warn("Sign up attempt notice:", signUpErr.message);
@@ -149,18 +163,22 @@
 
           // If master key was entered, ensure admin role in Firestore and session
           if (isMasterKey) {
+            localStorage.setItem('vynora_admin_session', 'active');
             localStorage.setItem('psalmstrings_admin_session', 'active');
+            localStorage.setItem('vynora_admin_email', email);
             localStorage.setItem('psalmstrings_admin_email', email);
             if (user && user.uid) {
-              await PsalmStrings.admin.setUserRole(user.uid, 'admin');
+              await Vynora.admin.setUserRole(user.uid, 'admin');
             }
           } else {
             // Check if user is recognized as admin
-            const isAuthorized = PsalmStrings.auth.isAdmin() || (email.toLowerCase() === 'admin@psalmstrings.com');
+            const isAuthorized = Vynora.auth.isAdmin() || (email.toLowerCase() === 'admin@vynora.com' || email.toLowerCase() === 'admin@psalmstrings.com');
             if (!isAuthorized) {
-              throw new Error("Access Denied: This account does not possess administrator privileges. Please enter the Master Security Key (psalm-admin-2026) to authorize.");
+              throw new Error("Access Denied: This account does not possess administrator privileges. Please enter the Master Security Key (vynora-admin-2026) to authorize.");
             }
+            localStorage.setItem('vynora_admin_session', 'active');
             localStorage.setItem('psalmstrings_admin_session', 'active');
+            localStorage.setItem('vynora_admin_email', email);
             localStorage.setItem('psalmstrings_admin_email', email);
           }
 

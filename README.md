@@ -1,19 +1,20 @@
-# PsalmStrings - Intelligent Movie Discovery & Recommendation Platform
+# Vynora - Modern Movie Discovery, Recommendation & Community Platform
 
-Transforming a legacy movie recommendation prototype into a modern, high-performance cinema discovery and community platform built with **HTML5, CSS3, Vanilla ES Modules, The Movie Database (TMDB) API, and Google Firebase (Auth & Cloud Firestore)**.
+**Vynora** is an ultra-modern, high-performance cinema discovery and community Progressive Web App (PWA) built with **HTML5, CSS3, Vanilla JavaScript, The Movie Database (TMDB) API, and Google Firebase (Auth & Cloud Firestore)**.
 
 ---
 
-## 1. Project Transformation Summary
+## 1. Project Transformation & Features
 
-| Feature / Dimension | Original Implementation | Upgraded Architecture |
+| Feature / Dimension | Original Implementation | Upgraded Vynora Architecture |
 | :--- | :--- | :--- |
+| **Brand Identity & PWA** | Legacy prototype without responsive logo or offline support. | **Vynora** brand identity with premium vector SVG logo, PWA manifest, service worker (`sw.js`), offline image caching, and desktop/mobile installability. |
 | **Data Source** | Hardcoded local image files (`media/AAAAB...`) and manual form entry. | **Dynamic Live TMDB API** with client-side caching, rate limit protection, and an authentic offline fallback catalog. |
 | **Movie Details** | Did not exist (clicking cards did nothing). | **Dedicated Movie Details Page** (`movie-details.html`) with 4K backdrops, synopsis, runtime, rating, cast directory, director, official trailers, similar movies, and interactive ratings. |
 | **Recommendations** | None (static rows with hardcoded labels). | **Explainable Activity-Based Recommendation Engine** calculating genre affinity weights from user profile preferences, favourited movies, and 1-10 star ratings. |
 | **Community & Discussions** | None. | **Real-Time Threaded Discussions** (`movie_comments` & replies), author avatars, timestamps, comment likes, in-place editing, deletion, and spam/XSS sanitization. |
 | **Library (Favourites & Watchlist)** | Ad-hoc `watchlist` collection with inconsistent document IDs (`userId_title_timestamp`). | **Structured Firestore Subcollections** (`users/{uid}/favourites/{movieId}` and `users/{uid}/watchlist/{movieId}`) using unique TMDB movie IDs to guarantee duplicate prevention and sub-millisecond cache sync. |
-| **Authentication & Profiles** | Scattered across files with disparate Firebase versions (v9, v10, v11). | **Unified Modular Firebase v11.4.0 SDK** with display names, profile avatars (preset picker + custom URL), preferred genre management, and password reset workflow. |
+| **Authentication & Profiles** | Scattered across files with disparate Firebase versions (v9, v10, v11). | **Unified Modular Firebase Compat Engine** with display names, profile avatars (preset picker + custom URL), preferred genre management, and password reset workflow. |
 | **UI / UX & Design System** | Inconsistent CSS rules and broken dropdown selectors. | **Unified Design System** (`common.css`) with glassmorphism navbar, Netflix/Prime-style horizontal scroll carousels, live debounced search preview, star rating widget, and toast alerts. |
 | **Security & Database Rules** | None (open/insecure). | **Production-Grade `firestore.rules`** enforcing user data isolation, preventing comment tampering, and enforcing input limits on the backend. |
 
@@ -30,7 +31,7 @@ Transforming a legacy movie recommendation prototype into a modern, high-perform
 3. **Generous Usage & Non-Commercial Terms:**
    - Free non-commercial API tier accessible to any registered developer with no strict daily rate limits for personal or educational projects.
 4. **Resilient Offline Fallback Strategy:**
-   - Even without an API key configured, PsalmStrings includes an authentic curated dataset of over 30+ cinema classics and blockbusters (`PsalmStrings.FALLBACK_MOVIES` in `js/app.js`). This ensures zero runtime crashes, instant demo capability, and seamless offline discovery.
+   - Even without an API key configured, Vynora includes an authentic curated dataset of over 30+ cinema classics and blockbusters (`Vynora.FALLBACK_MOVIES` in `js/app.js`). This ensures zero runtime crashes, instant demo capability, and seamless offline discovery.
 
 ---
 
@@ -40,11 +41,11 @@ To protect sensitive keys and prevent unauthorized tampering, **API key manageme
 
 ### How the Administrator Configures the Platform Key:
 1. Navigate to the Admin Portal at [pages/admin-login.html](file:///c:/Users/HP/OneDrive/Desktop/My%20Websites/Movie%20App/pages/admin-login.html) (or click **"Admin Portal"** in the footer).
-2. Sign in with administrator credentials (or enter the master setup passcode `psalm-admin-2026`).
+2. Sign in with administrator credentials (or enter the master setup passcode `vynora-admin-2026` or `psalm-admin-2026`).
 3. Under the **"TMDB API & Controls"** tab:
    - Paste your TMDB v3 API Key into the input field.
    - Click **"Verify & Save Platform Key"**.
-   - The system pings TMDB, verifies latency and validity, and securely commits the key to Firestore `system_config/general`.
+   - The system pings TMDB, verifies latency and validity, and securely activates the key instantly across the application and commits it to Firestore `system_config/general`.
 4. **Public & Random Users:** All public visitors and regular users automatically receive the live catalog powered by this platform key without ever seeing the raw key or having access to change it.
 5. **Visitor Gate vs. Registered Members:**
    - **Visitors:** Can explore all genres, discover trending movies, use live search, view 4K backdrops, and read cast bios (preview mode).

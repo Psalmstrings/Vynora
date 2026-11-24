@@ -1,14 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=./sigup.html">
-  <title>Redirecting to Sign Up - PsalmStrings</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Free Account - Vynora</title>
+  <meta name="description" content="Join Vynora to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions." />
+
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#FCD218" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vynora" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+  <link rel="alternate icon" href="../assets/icons/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/auth.css" />
+  <link rel="stylesheet" href="../css/profile.css" />
+
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <!-- Vynora Core Application Library -->
+  <script src="../js/app.js"></script>
 </head>
-<body style="background:#0c0d11; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
-  <p>Redirecting to <a href="./sigup.html" style="color:#fcd218;">Sign Up</a>...</p>
+<body>
+  <div class="auth-page-wrapper">
+    <header class="auth-header">
+      <a href="../index.html" class="site-logo">
+        <img src="../assets/icons/logo-header.svg" alt="Vynora" class="brand-logo-img" />
+      </a>
+      <a href="./homepage.html" class="btn-nav-signin">
+        <i class="fas fa-compass"></i> Explore Guest Mode
+      </a>
+    </header>
+
+    <main class="auth-content-container">
+      <div class="auth-card" style="max-width: 520px;">
+        <h1 class="auth-card-title">Create Account</h1>
+        <p class="auth-card-subtitle">Join Vynora to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions.</p>
+
+        <div class="auth-error-box" id="auth-error-message"></div>
+
+        <form id="sign-up-form">
+          <div class="auth-form-group">
+            <label for="signup-fullname">Full Name</label>
+            <input type="text" id="signup-fullname" placeholder="e.g. Alex Morgan" required autocomplete="name" />
+          </div>
+
+          <div class="auth-form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="name@example.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="auth-form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="At least 6 characters" required autocomplete="new-password" />
+            </div>
+
+            <div class="auth-form-group">
+              <label for="signup-confirm-password">Confirm Password</label>
+              <input type="password" id="signup-confirm-password" placeholder="Confirm password" required autocomplete="new-password" />
+            </div>
+          </div>
+
+          <!-- Avatar Preset Selection -->
+          <div class="auth-form-group">
+            <label>Pick Your Cinema Avatar</label>
+            <div class="avatar-presets-grid" id="avatar-presets-container" style="margin-top: 6px;"></div>
+          </div>
+
+          <button type="submit" class="auth-submit-btn" id="btn-submit-signup">
+            Create Free Account
+          </button>
+        </form>
+
+        <div class="auth-card-footer">
+          Already have an account? <a href="./signin.html">Log In</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
   <script>
-    window.location.replace('./sigup.html' + window.location.search);
+    let selectedAvatar = PsalmStrings.CONFIG.DEFAULT_AVATAR;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const avatarGrid = document.getElementById('avatar-presets-container');
+      avatarGrid.innerHTML = PsalmStrings.CONFIG.AVATARS.map((p, i) => `
+        <div class="avatar-preset-item ${i === 0 ? 'selected' : ''}" data-url="${p.url}" title="${p.name}">
+          <img src="${p.url}" alt="${p.name}">
+        </div>
+      `).join('');
+
+      avatarGrid.querySelectorAll('.avatar-preset-item').forEach(item => {
+        item.onclick = () => {
+          avatarGrid.querySelectorAll('.avatar-preset-item').forEach(x => x.classList.remove('selected'));
+          item.classList.add('selected');
+          selectedAvatar = item.getAttribute('data-url');
+        };
+      });
+
+      const form = document.getElementById('sign-up-form');
+      const errorBox = document.getElementById('auth-error-message');
+      const submitBtn = document.getElementById('btn-submit-signup');
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errorBox.style.display = 'none';
+
+        const name = document.getElementById('signup-fullname').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+        if (password.length < 6) {
+          errorBox.style.display = 'block';
+          errorBox.textContent = 'Password must be at least 6 characters long.';
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          errorBox.style.display = 'block';
+          errorBox.textContent = 'Passwords do not match.';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+        try {
+          await PsalmStrings.auth.signUp(name, email, password, selectedAvatar);
+          PsalmStrings.ui.showToast('Account created successfully! Welcome to PsalmStrings.', 'success');
+          setTimeout(() => {
+            window.location.href = './homepage.html';
+          }, 600);
+        } catch (err) {
+          console.error("Signup error:", err);
+          errorBox.style.display = 'block';
+          if (err.code === 'auth/email-already-in-use') {
+            errorBox.textContent = 'This email is already registered. Please sign in instead.';
+          } else if (err.code === 'auth/invalid-email') {
+            errorBox.textContent = 'The email address is improperly formatted.';
+          } else {
+            errorBox.textContent = err.message || 'Failed to create account.';
+          }
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Free Account';
+        }
+      });
+    });
   </script>
 </body>
 </html>

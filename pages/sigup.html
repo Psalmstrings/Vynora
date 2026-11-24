@@ -3,26 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Free Account - PsalmStrings</title>
+  <title>Create Free Account - Vynora</title>
+  <meta name="description" content="Join Vynora to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions." />
+
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#FCD218" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vynora" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+  <link rel="alternate icon" href="../assets/icons/favicon-32x32.png" />
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/auth.css" />
   <link rel="stylesheet" href="../css/profile.css" />
-  <link rel="shortcut icon" href="../media/WhatsApp Image 2025-04-04 at 04.52.12_e46090e3.jpg" type="image/x-icon" />
 
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <!-- PsalmStrings Core Application Library -->
+  <!-- Vynora Core Application Library -->
   <script src="../js/app.js"></script>
 </head>
 <body>
   <div class="auth-page-wrapper">
     <header class="auth-header">
       <a href="../index.html" class="site-logo">
-        <i class="fas fa-film"></i> PsalmStrings
+        <img src="../assets/icons/logo-header.svg" alt="Vynora" class="brand-logo-img" />
       </a>
       <a href="./homepage.html" class="btn-nav-signin">
         <i class="fas fa-compass"></i> Explore Guest Mode
@@ -32,7 +46,7 @@
     <main class="auth-content-container">
       <div class="auth-card" style="max-width: 520px;">
         <h1 class="auth-card-title">Create Account</h1>
-        <p class="auth-card-subtitle">Join PsalmStrings to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions.</p>
+        <p class="auth-card-subtitle">Join Vynora to curate your movie watchlist, receive explainable recommendations, and participate in lively movie discussions.</p>
 
         <div class="auth-error-box" id="auth-error-message"></div>
 

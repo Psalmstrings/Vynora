@@ -659,7 +659,7 @@
         });
       } else {
         // Fallback local session if offline
-        const localUser = localStorage.getItem('psalmstrings_local_user');
+        const localUser = localStorage.getItem('vynora_local_user') || localStorage.getItem('psalmstrings_local_user');
         if (localUser) {
           try {
             this.currentUser = JSON.parse(localUser);
@@ -732,6 +732,7 @@
       } else {
         // Fallback local login
         const user = { uid: 'local_' + Date.now(), email: email.trim(), displayName: email.split('@')[0], photoURL: CONFIG.DEFAULT_AVATAR };
+        localStorage.setItem('vynora_local_user', JSON.stringify(user));
         localStorage.setItem('psalmstrings_local_user', JSON.stringify(user));
         this.currentUser = user;
         this.userProfile = user;
@@ -760,6 +761,7 @@
         return cred.user;
       } else {
         const user = { uid: 'local_' + Date.now(), email: email.trim(), displayName: name.trim(), photoURL: avatarUrl, genres: ['Action', 'Science Fiction'] };
+        localStorage.setItem('vynora_local_user', JSON.stringify(user));
         localStorage.setItem('psalmstrings_local_user', JSON.stringify(user));
         this.currentUser = user;
         this.userProfile = user;
@@ -773,6 +775,7 @@
       if (auth) {
         await auth.signOut();
       }
+      localStorage.removeItem('vynora_local_user');
       localStorage.removeItem('psalmstrings_local_user');
       this.currentUser = null;
       this.userProfile = null;
@@ -1492,7 +1495,7 @@
               </div>
               <h3 id="auth-gate-title">Sign In to Continue</h3>
               <p class="modal-desc">
-                Only registered members can <strong id="auth-gate-action" style="color:var(--color-gold);">watch trailers</strong>. Join PsalmStrings for free to unlock 4K trailers, curate your personal favourites &amp; watchlist, and share your reviews.
+                Only registered members can <strong id="auth-gate-action" style="color:var(--color-gold);">watch trailers</strong>. Join Vynora for free to unlock 4K trailers, curate your personal favourites &amp; watchlist, and share your reviews.
               </p>
               <div class="auth-gate-perks">
                 <div class="perk-item"><i class="fas fa-check-circle text-gold"></i> Stream official 4K &amp; HD trailers</div>
@@ -1634,7 +1637,9 @@
         drawer.className = 'mobile-nav-drawer';
         drawer.innerHTML = `
           <div class="mobile-drawer-header">
-            <span style="font-weight: 800; font-size: 1.25rem; color: var(--color-gold);"><i class="fas fa-film"></i> PsalmStrings</span>
+            <span style="font-weight: 800; font-size: 1.25rem; color: var(--color-gold); display:flex; align-items:center; gap:8px;">
+              <img src="${isSubDir ? '../' : './'}assets/icons/logo-header.svg" alt="Vynora" style="height:32px; width:auto; vertical-align:middle;">
+            </span>
             <button type="button" class="mobile-drawer-close" aria-label="Close menu">&times;</button>
           </div>
           <div id="mobile-drawer-auth"></div>
@@ -1766,7 +1771,7 @@
       }
       // 2. Fallback to Local Backup
       try {
-        const local = JSON.parse(localStorage.getItem('psalmstrings_system_config') || '{}');
+        const local = JSON.parse(localStorage.getItem('vynora_system_config') || localStorage.getItem('psalmstrings_system_config') || '{}');
         if (local.tmdbApiKey || local.siteAnnouncement) return local;
       } catch (e) {}
       return { tmdbApiKey: tmdbApi.getApiKey() };
@@ -1778,6 +1783,7 @@
         tmdbApi.setApiKey(cfg.tmdbApiKey);
       }
       try {
+        localStorage.setItem('vynora_system_config', JSON.stringify(cfg));
         localStorage.setItem('psalmstrings_system_config', JSON.stringify(cfg));
       } catch (e) {}
 
@@ -1816,8 +1822,72 @@
     }
   };
 
-  // 10. EXPOSE GLOBAL NAMESPACE
-  window.PsalmStrings = {
+  // 9. PWA SERVICE WORKER & INSTALL PROMPT SERVICE
+  const pwaService = {
+    deferredPrompt: null,
+    init() {
+      // Register Service Worker
+      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        window.addEventListener('load', () => {
+          const isSub = window.location.pathname.includes('/pages/');
+          const swPath = isSub ? '../sw.js' : './sw.js';
+          navigator.serviceWorker.register(swPath)
+            .then(reg => {
+              console.log('Vynora PWA Service Worker registered:', reg.scope);
+            })
+            .catch(err => {
+              console.warn('Vynora SW registration info:', err.message);
+            });
+        });
+      }
+
+      // Capture beforeinstallprompt for rich PWA installation
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        this.deferredPrompt = e;
+        this.renderInstallButton();
+      });
+
+      window.addEventListener('appinstalled', () => {
+        this.deferredPrompt = null;
+        console.log('Vynora PWA installed successfully.');
+        const btn = document.getElementById('btn-pwa-install');
+        if (btn) btn.style.display = 'none';
+      });
+    },
+
+    async promptInstall() {
+      if (!this.deferredPrompt) {
+        ui.showToast('To install Vynora, use "Add to Home Screen" or the install icon in your browser address bar.', 'info');
+        return;
+      }
+      this.deferredPrompt.prompt();
+      const choice = await this.deferredPrompt.userChoice;
+      if (choice && choice.outcome === 'accepted') {
+        ui.showToast('Welcome to Vynora PWA!', 'success');
+      }
+      this.deferredPrompt = null;
+      const btn = document.getElementById('btn-pwa-install');
+      if (btn) btn.style.display = 'none';
+    },
+
+    renderInstallButton() {
+      const target = document.querySelector('.header-auth-container') || document.querySelector('.nav-links');
+      if (target && !document.getElementById('btn-pwa-install')) {
+        const btn = document.createElement('button');
+        btn.id = 'btn-pwa-install';
+        btn.type = 'button';
+        btn.className = 'btn-pwa-install';
+        btn.innerHTML = '<i class="fas fa-download"></i> <span class="hide-sm">Install App</span>';
+        btn.title = 'Install Vynora as a native application';
+        btn.onclick = () => this.promptInstall();
+        target.prepend(btn);
+      }
+    }
+  };
+
+  // 10. EXPOSE GLOBAL NAMESPACES (Vynora + Legacy PsalmStrings alias)
+  window.Vynora = {
     CONFIG,
     FALLBACK_MOVIES,
     tmdbApi,
@@ -1827,15 +1897,19 @@
     comments: commentsService,
     analytics: analyticsService,
     admin: adminService,
+    pwa: pwaService,
     ui
   };
+  window.PsalmStrings = window.Vynora;
 
   // Initialize immediately & on DOM ready
   authService.init();
   libraryService.init();
+  pwaService.init();
 
   const handleInit = () => {
     ui.initMobileNav();
+    pwaService.renderInstallButton();
     const page = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
     analyticsService.trackPageView(page);
     tmdbApi.loadSystemConfig();
