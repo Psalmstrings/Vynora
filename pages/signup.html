@@ -139,8 +139,8 @@
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
 
         try {
-          await PsalmStrings.auth.signUp(name, email, password, selectedAvatar);
-          PsalmStrings.ui.showToast('Account created successfully! Welcome to Vynora.', 'success');
+          await Vynora.auth.signUp(name, email, password, selectedAvatar);
+          Vynora.ui.showToast('Account created successfully! Welcome to Vynora.', 'success');
           setTimeout(() => {
             window.location.href = './homepage.html';
           }, 600);

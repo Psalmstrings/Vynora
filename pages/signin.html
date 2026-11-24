@@ -77,6 +77,20 @@
           </button>
         </form>
 
+        <!-- Admin Access Note & 1-Click Auto Fill -->
+        <div class="admin-quick-note" style="margin-top: 18px; padding: 12px 14px; background: rgba(252, 210, 24, 0.08); border: 1px dashed rgba(252, 210, 24, 0.4); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary); text-align: left;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 4px;">
+            <strong style="color: var(--color-gold);"><i class="fas fa-shield-alt"></i> Administrator Login:</strong>
+            <button type="button" id="btn-fill-admin-creds" style="background:transparent; border:none; color:var(--color-gold); font-size:0.75rem; cursor:pointer; text-decoration:underline; font-weight:700;">Auto-fill</button>
+          </div>
+          <div style="font-size:0.8rem; margin-top:2px;">
+            <span>Email: <code>admin@vynora.com</code></span> &bull; <span>Password: <code>VynoraAdmin@2026</code></span>
+          </div>
+          <p style="margin: 4px 0 0; font-size: 0.73rem; color: var(--text-muted);">
+            Admins sign in here — upon authentication, you will be redirected directly to the Executive Command Center.
+          </p>
+        </div>
+
         <div class="auth-card-footer">
           Don't have an account yet? <a href="./signup.html">Sign Up Free</a>
         </div>
@@ -124,6 +138,16 @@
         togglePwdBtn.innerHTML = `<i class="fas ${isPwd ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
       };
 
+      // Auto-fill admin credentials button
+      const autoFillBtn = document.getElementById('btn-fill-admin-creds');
+      if (autoFillBtn) {
+        autoFillBtn.onclick = () => {
+          emailInput.value = 'admin@vynora.com';
+          passwordInput.value = 'VynoraAdmin@2026';
+          Vynora.ui.showToast('Admin credentials loaded. Click "Sign In" to proceed.', 'info');
+        };
+      }
+
       // Sign In Form Submit
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -132,11 +156,25 @@
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
 
         try {
-          await PsalmStrings.auth.login(emailInput.value, passwordInput.value);
-          PsalmStrings.ui.showToast('Sign in successful! Redirecting...', 'success');
-          setTimeout(() => {
-            window.location.href = './homepage.html';
-          }, 600);
+          const authResult = await Vynora.auth.login(emailInput.value, passwordInput.value);
+          const isAdmin = authResult?.isAdmin 
+            || Vynora.auth.isAdmin() 
+            || (authResult?.profile && authResult.profile.role === 'admin') 
+            || (emailInput.value.trim().toLowerCase() === 'admin@vynora.com');
+
+          if (isAdmin) {
+            localStorage.setItem('vynora_admin_session', 'active');
+            localStorage.setItem('vynora_admin_email', emailInput.value.trim());
+            Vynora.ui.showToast('Administrator authenticated! Opening Command Center...', 'success', 3500);
+            setTimeout(() => {
+              window.location.href = './admin.html';
+            }, 650);
+          } else {
+            Vynora.ui.showToast('Sign in successful! Welcome to Vynora.', 'success');
+            setTimeout(() => {
+              window.location.href = './homepage.html';
+            }, 600);
+          }
         } catch (error) {
           console.error("Sign in error:", error);
           errorBox.style.display = 'block';

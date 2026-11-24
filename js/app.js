@@ -725,44 +725,185 @@
     },
 
     async login(email, password) {
+      const cleanEmail = (email || '').trim().toLowerCase();
+      const rawPwd = (password || '').trim();
+      const nowIso = new Date().toISOString();
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      const isOfficialAdmin = (cleanEmail === 'admin@vynora.com' || cleanEmail === 'admin@psalmstrings.com') &&
+        (rawPwd === 'VynoraAdmin@2026' || rawPwd === 'vynora-admin-2026' || rawPwd === 'psalm-admin-2026' || rawPwd === 'Admin@12345');
+
       if (auth) {
-        const cred = await auth.signInWithEmailAndPassword(email.trim(), password);
-        await this.loadProfile(cred.user.uid);
-        return cred.user;
+        try {
+          const cred = await auth.signInWithEmailAndPassword(cleanEmail, rawPwd);
+          await this.loadProfile(cred.user.uid);
+          if (db) {
+            try {
+              await db.collection("users").doc(cred.user.uid).set({
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastLoginIso: nowIso,
+                lastDevice: isMobile ? 'Mobile' : 'Desktop'
+              }, { merge: true });
+            } catch (e) {}
+          }
+          if (this.isAdmin()) {
+            localStorage.setItem('vynora_admin_session', 'active');
+            localStorage.setItem('vynora_admin_email', cleanEmail);
+          }
+          return { user: cred.user, profile: this.userProfile, isAdmin: this.isAdmin() };
+        } catch (authErr) {
+          // If official admin credentials entered but user document doesn't exist in Firebase yet
+          if (isOfficialAdmin) {
+            try {
+              const cred = await auth.createUserWithEmailAndPassword(cleanEmail, rawPwd);
+              await cred.user.updateProfile({ displayName: 'Vynora Administrator', photoURL: CONFIG.DEFAULT_AVATAR });
+              const adminProfile = {
+                uid: cred.user.uid,
+                name: 'Vynora Administrator',
+                email: cleanEmail,
+                avatarUrl: CONFIG.DEFAULT_AVATAR,
+                role: 'admin',
+                status: 'active',
+                device: isMobile ? 'Mobile' : 'Desktop',
+                platform: navigator.platform || 'Web',
+                genres: ['Action', 'Science Fiction'],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdIso: nowIso,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastLoginIso: nowIso
+              };
+              if (db) {
+                try { await db.collection("users").doc(cred.user.uid).set(adminProfile); } catch (e) {}
+              }
+              this._recordLocalUser(adminProfile);
+              this.currentUser = cred.user;
+              this.userProfile = adminProfile;
+              localStorage.setItem('vynora_admin_session', 'active');
+              localStorage.setItem('vynora_admin_email', cleanEmail);
+              this._notify();
+              this.renderNavbarAuth();
+              return { user: cred.user, profile: adminProfile, isAdmin: true };
+            } catch (createErr) {
+              // Local admin fallback
+              const adminUser = {
+                uid: 'admin_master',
+                email: cleanEmail,
+                displayName: 'Vynora Administrator',
+                name: 'Vynora Administrator',
+                photoURL: CONFIG.DEFAULT_AVATAR,
+                avatarUrl: CONFIG.DEFAULT_AVATAR,
+                role: 'admin',
+                status: 'active',
+                device: isMobile ? 'Mobile' : 'Desktop',
+                lastLoginIso: nowIso
+              };
+              localStorage.setItem('vynora_admin_session', 'active');
+              localStorage.setItem('vynora_admin_email', cleanEmail);
+              localStorage.setItem('vynora_local_user', JSON.stringify(adminUser));
+              this._recordLocalUser(adminUser);
+              this.currentUser = adminUser;
+              this.userProfile = adminUser;
+              this._notify();
+              this.renderNavbarAuth();
+              return { user: adminUser, profile: adminUser, isAdmin: true };
+            }
+          }
+          throw authErr;
+        }
       } else {
         // Fallback local login
-        const user = { uid: 'local_' + Date.now(), email: email.trim(), displayName: email.split('@')[0], photoURL: CONFIG.DEFAULT_AVATAR };
+        const isAdmin = isOfficialAdmin || cleanEmail === 'admin@vynora.com';
+        const user = {
+          uid: isAdmin ? 'admin_master' : ('local_' + Date.now()),
+          email: cleanEmail,
+          displayName: isAdmin ? 'Vynora Administrator' : cleanEmail.split('@')[0],
+          photoURL: CONFIG.DEFAULT_AVATAR,
+          role: isAdmin ? 'admin' : 'user',
+          status: 'active',
+          lastLoginIso: nowIso
+        };
+        if (isAdmin) {
+          localStorage.setItem('vynora_admin_session', 'active');
+          localStorage.setItem('vynora_admin_email', cleanEmail);
+        }
         localStorage.setItem('vynora_local_user', JSON.stringify(user));
-        localStorage.setItem('psalmstrings_local_user', JSON.stringify(user));
+        this._recordLocalUser(user);
         this.currentUser = user;
         this.userProfile = user;
         this._notify();
         this.renderNavbarAuth();
-        return user;
+        return { user, profile: user, isAdmin: this.isAdmin() };
       }
     },
 
+    _recordLocalUser(user) {
+      try {
+        let dir = JSON.parse(localStorage.getItem('vynora_users_directory') || localStorage.getItem('psalmstrings_users_directory') || '[]');
+        const idx = dir.findIndex(u => u.uid === user.uid || (u.email && user.email && u.email.toLowerCase() === user.email.toLowerCase()));
+        if (idx >= 0) {
+          dir[idx] = { ...dir[idx], ...user };
+        } else {
+          dir.unshift(user);
+        }
+        localStorage.setItem('vynora_users_directory', JSON.stringify(dir));
+        localStorage.setItem('psalmstrings_users_directory', JSON.stringify(dir));
+      } catch (e) {}
+    },
+
     async signUp(name, email, password, avatarUrl = CONFIG.DEFAULT_AVATAR) {
+      const cleanEmail = email.trim();
+      const cleanName = name.trim();
+      const isAdminUser = cleanEmail.toLowerCase() === 'admin@vynora.com' || cleanEmail.toLowerCase() === 'admin@psalmstrings.com';
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const nowIso = new Date().toISOString();
+
       if (auth) {
-        const cred = await auth.createUserWithEmailAndPassword(email.trim(), password);
-        await cred.user.updateProfile({ displayName: name.trim(), photoURL: avatarUrl });
+        const cred = await auth.createUserWithEmailAndPassword(cleanEmail, password);
+        await cred.user.updateProfile({ displayName: cleanName, photoURL: avatarUrl });
         const profile = {
           uid: cred.user.uid,
-          name: name.trim(),
-          email: email.trim(),
+          name: cleanName,
+          email: cleanEmail,
           avatarUrl: avatarUrl,
+          role: isAdminUser ? 'admin' : 'user',
+          status: 'active',
+          device: isMobile ? 'Mobile' : 'Desktop',
+          platform: navigator.platform || 'Web',
           genres: ['Action', 'Science Fiction'],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdIso: nowIso,
+          lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLoginIso: nowIso
         };
         if (db) {
-          await db.collection("users").doc(cred.user.uid).set(profile);
+          try {
+            await db.collection("users").doc(cred.user.uid).set(profile);
+          } catch (e) {
+            console.warn("Could not write user to Firestore:", e.message);
+          }
         }
+        this._recordLocalUser(profile);
         this.userProfile = profile;
         return cred.user;
       } else {
-        const user = { uid: 'local_' + Date.now(), email: email.trim(), displayName: name.trim(), photoURL: avatarUrl, genres: ['Action', 'Science Fiction'] };
+        const user = {
+          uid: 'local_' + Date.now(),
+          email: cleanEmail,
+          displayName: cleanName,
+          name: cleanName,
+          photoURL: avatarUrl,
+          avatarUrl: avatarUrl,
+          role: isAdminUser ? 'admin' : 'user',
+          status: 'active',
+          device: isMobile ? 'Mobile' : 'Desktop',
+          platform: navigator.platform || 'Web',
+          genres: ['Action', 'Science Fiction'],
+          createdIso: nowIso,
+          lastLoginIso: nowIso
+        };
         localStorage.setItem('vynora_local_user', JSON.stringify(user));
         localStorage.setItem('psalmstrings_local_user', JSON.stringify(user));
+        this._recordLocalUser(user);
         this.currentUser = user;
         this.userProfile = user;
         this._notify();
@@ -1775,23 +1916,183 @@
       return false;
     },
 
-    async getAllUsers() {
-      if (!db) return [];
+    getLocalUsers() {
       try {
-        const snap = await db.collection('users').get();
-        const list = [];
-        snap.forEach(d => list.push({ uid: d.id, ...d.data() }));
-        return list;
+        return JSON.parse(localStorage.getItem('vynora_users_directory') || localStorage.getItem('psalmstrings_users_directory') || '[]');
       } catch (e) {
-        console.error("Admin fetch users error:", e);
         return [];
       }
     },
 
+    subscribeUsers(callback) {
+      if (!callback) return () => {};
+      let initialBatchLoaded = false;
+
+      // 1. If Firestore db is active, bind real-time snapshot
+      if (db) {
+        try {
+          const unsub = db.collection('users').onSnapshot((snapshot) => {
+            const list = [];
+            const newSignups = [];
+
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === 'added' && initialBatchLoaded) {
+                newSignups.push({ uid: change.doc.id, ...change.doc.data() });
+              }
+            });
+
+            snapshot.forEach((doc) => {
+              list.push({ uid: doc.id, ...doc.data() });
+            });
+
+            // Merge with any local offline users that aren't yet in Firestore
+            const localUsers = this.getLocalUsers();
+            localUsers.forEach(lu => {
+              if (!list.some(u => u.uid === lu.uid || (u.email && lu.email && u.email.toLowerCase() === lu.email.toLowerCase()))) {
+                list.push(lu);
+              }
+            });
+
+            // Sort by creation date descending (newest first)
+            list.sort((a, b) => {
+              const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdIso ? new Date(a.createdIso).getTime() : 0);
+              const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdIso ? new Date(b.createdIso).getTime() : 0);
+              return bTime - aTime;
+            });
+
+            // Cache in local directory
+            try {
+              localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+              localStorage.setItem('psalmstrings_users_directory', JSON.stringify(list));
+            } catch (e) {}
+
+            initialBatchLoaded = true;
+            callback(list, newSignups);
+          }, (err) => {
+            console.warn("Firestore users real-time stream notice (using local directory):", err.message);
+            callback(this.getLocalUsers(), []);
+          });
+
+          return unsub;
+        } catch (err) {
+          console.warn("Error establishing users snapshot listener:", err);
+        }
+      }
+
+      // Fallback local directory
+      callback(this.getLocalUsers(), []);
+      return () => {};
+    },
+
+    async getAllUsers() {
+      if (db) {
+        try {
+          const snap = await db.collection('users').get();
+          const list = [];
+          snap.forEach(d => list.push({ uid: d.id, ...d.data() }));
+
+          const localUsers = this.getLocalUsers();
+          localUsers.forEach(lu => {
+            if (!list.some(u => u.uid === lu.uid || (u.email && lu.email && u.email.toLowerCase() === lu.email.toLowerCase()))) {
+              list.push(lu);
+            }
+          });
+
+          list.sort((a, b) => {
+            const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdIso ? new Date(a.createdIso).getTime() : 0);
+            const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdIso ? new Date(b.createdIso).getTime() : 0);
+            return bTime - aTime;
+          });
+
+          if (list.length > 0) {
+            try {
+              localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+              localStorage.setItem('psalmstrings_users_directory', JSON.stringify(list));
+            } catch (e) {}
+            return list;
+          }
+        } catch (e) {
+          console.warn("Admin fetch users error:", e.message);
+        }
+      }
+      return this.getLocalUsers();
+    },
+
     async setUserRole(uid, role) {
-      if (!db || !uid) return false;
-      await db.collection('users').doc(uid).set({ role }, { merge: true });
+      if (!uid) return false;
+      if (db) {
+        try {
+          await db.collection('users').doc(uid).set({ role }, { merge: true });
+        } catch (e) {}
+      }
+      const list = this.getLocalUsers();
+      const user = list.find(u => u.uid === uid);
+      if (user) {
+        user.role = role;
+        localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+      }
       return true;
+    },
+
+    async setUserStatus(uid, status) {
+      if (!uid) return false;
+      if (db) {
+        try {
+          await db.collection('users').doc(uid).set({ status }, { merge: true });
+        } catch (e) {}
+      }
+      const list = this.getLocalUsers();
+      const user = list.find(u => u.uid === uid);
+      if (user) {
+        user.status = status;
+        localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+      }
+      return true;
+    },
+
+    async deleteUser(uid) {
+      if (!uid) return false;
+      if (db) {
+        try {
+          await db.collection('users').doc(uid).delete();
+        } catch (e) {}
+      }
+      let list = this.getLocalUsers();
+      list = list.filter(u => u.uid !== uid);
+      localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+      return true;
+    },
+
+    async createManualUser({ name, email, role = 'user', genres = ['Action', 'Sci-Fi'] }) {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const newUid = 'usr_' + Math.random().toString(36).substring(2, 10);
+      const nowIso = new Date().toISOString();
+      const profile = {
+        uid: newUid,
+        name: name.trim(),
+        email: email.trim(),
+        avatarUrl: CONFIG.DEFAULT_AVATAR,
+        role,
+        status: 'active',
+        device: isMobile ? 'Mobile' : 'Desktop',
+        platform: navigator.platform || 'Web',
+        genres,
+        createdIso: nowIso,
+        lastLoginIso: nowIso
+      };
+      if (db) {
+        try {
+          await db.collection('users').doc(newUid).set({
+            ...profile,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (e) {}
+      }
+      const list = this.getLocalUsers();
+      list.unshift(profile);
+      localStorage.setItem('vynora_users_directory', JSON.stringify(list));
+      return profile;
     },
 
     async getSystemConfig() {

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - Vynora</title>
-  <meta name="description" content="Vynora Platform Executive Command Center &amp; Management Dashboard." />
+  <title>Admin Dashboard &amp; Live User Monitor - Vynora</title>
+  <meta name="description" content="Vynora Platform Executive Command Center &amp; Real-Time User Sign-Up Monitor." />
 
   <!-- PWA & Mobile Web App Meta -->
   <link rel="manifest" href="../manifest.json" />
@@ -28,6 +28,8 @@
       --admin-card-hover: #191b26;
       --admin-border: rgba(255, 255, 255, 0.08);
       --admin-gold: #fcd218;
+      --admin-green: #2ecc71;
+      --admin-red: #e50914;
     }
 
     body {
@@ -39,8 +41,9 @@
     }
 
     .admin-navbar {
-      background: rgba(14, 16, 23, 0.95);
+      background: rgba(14, 16, 23, 0.96);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--admin-border);
       padding: 0 32px;
       height: 70px;
@@ -62,14 +65,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #fff;
       text-decoration: none;
     }
 
     .admin-nav-badge {
-      background: linear-gradient(135deg, rgba(252, 210, 24, 0.25), rgba(229, 9, 20, 0.2));
+      background: linear-gradient(135deg, rgba(252, 210, 24, 0.2), rgba(229, 9, 20, 0.15));
       color: var(--admin-gold);
       border: 1px solid rgba(252, 210, 24, 0.4);
       padding: 4px 10px;
@@ -86,7 +86,7 @@
     .admin-nav-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .admin-user-pill {
@@ -105,14 +105,14 @@
       height: 28px;
       border-radius: 50%;
       object-fit: cover;
-      border: 1px solid var(--admin-gold);
+      border: 1.5px solid var(--admin-gold);
     }
 
     /* Main Container */
     .admin-shell {
       max-width: 1360px;
       margin: 0 auto;
-      padding: 32px 24px 60px;
+      padding: 30px 24px 60px;
       width: 100%;
       flex: 1;
     }
@@ -127,12 +127,13 @@
     }
 
     .admin-title-row h1 {
-      font-size: 1.8rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #fff;
       display: flex;
       align-items: center;
       gap: 12px;
+      letter-spacing: -0.3px;
     }
 
     .admin-title-row p {
@@ -141,66 +142,98 @@
       margin-top: 4px;
     }
 
+    /* Live Pulse Badge */
+    .live-pulse-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(46, 204, 113, 0.12);
+      border: 1px solid rgba(46, 204, 113, 0.4);
+      color: var(--admin-green);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 14px rgba(46, 204, 113, 0.15);
+    }
+
+    .pulse-dot-green {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--admin-green);
+      box-shadow: 0 0 10px var(--admin-green);
+      animation: livePulseAnim 1.6s infinite ease-in-out;
+    }
+
+    @keyframes livePulseAnim {
+      0% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 4px var(--admin-green); }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px var(--admin-green); }
+      100% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 4px var(--admin-green); }
+    }
+
     /* Live KPI Cards */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-      margin-bottom: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
     }
 
     .kpi-card {
       background: var(--admin-card-bg);
       border: 1px solid var(--admin-border);
       border-radius: var(--radius-md);
-      padding: 22px;
+      padding: 20px;
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       transition: transform 0.2s, border-color 0.2s;
     }
 
     .kpi-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(252, 210, 24, 0.3);
+      border-color: rgba(252, 210, 24, 0.35);
     }
 
     .kpi-icon-box {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       flex-shrink: 0;
     }
 
     .kpi-icon-users { background: rgba(52, 152, 219, 0.15); color: #3498db; }
-    .kpi-icon-traffic { background: rgba(46, 204, 113, 0.15); color: #2ecc71; }
-    .kpi-icon-comments { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
+    .kpi-icon-today { background: rgba(46, 204, 113, 0.15); color: var(--admin-green); }
+    .kpi-icon-traffic { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
     .kpi-icon-api { background: rgba(252, 210, 24, 0.15); color: var(--admin-gold); }
 
     .kpi-info h4 {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-muted);
-      margin-bottom: 6px;
-      font-weight: 600;
+      margin-bottom: 4px;
+      font-weight: 700;
     }
 
     .kpi-info .kpi-number {
       font-size: 1.7rem;
       font-weight: 800;
       color: #fff;
-      line-height: 1;
+      line-height: 1.1;
     }
 
     .kpi-info small {
       font-size: 0.75rem;
       color: var(--text-secondary);
-      margin-top: 4px;
+      margin-top: 3px;
       display: block;
     }
 
@@ -209,25 +242,27 @@
       display: flex;
       gap: 8px;
       border-bottom: 1px solid var(--admin-border);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       overflow-x: auto;
       padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
     }
 
     .admin-tab-btn {
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       padding: 10px 18px;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
       white-space: nowrap;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
     }
 
     .admin-tab-btn:hover {
@@ -236,27 +271,131 @@
     }
 
     .admin-tab-btn.active {
-      color: #000;
-      background: var(--admin-gold);
-      font-weight: 700;
+      color: var(--admin-gold);
+      border-bottom: 2px solid var(--admin-gold);
+      background: rgba(252, 210, 24, 0.06);
     }
 
-    /* Tab Panes */
+    /* Panes */
     .admin-pane {
       display: none;
-      animation: fadeIn 0.2s ease;
     }
 
     .admin-pane.active {
       display: block;
+      animation: fadeInPane 0.3s ease-out;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInPane {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Content Cards & Sections */
+    /* Live Sign-ups Stream Card */
+    .live-stream-card {
+      background: linear-gradient(180deg, rgba(20, 22, 31, 0.98), rgba(14, 16, 23, 0.98));
+      border: 1px solid rgba(252, 210, 24, 0.3);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .live-stream-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .live-stream-header h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .live-stream-feed {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .signup-feed-item {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .signup-feed-item:hover {
+      border-color: rgba(252, 210, 24, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .feed-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--admin-gold);
+      flex-shrink: 0;
+    }
+
+    .feed-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .feed-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-email {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .feed-badge-new {
+      background: rgba(46, 204, 113, 0.2);
+      color: var(--admin-green);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.68rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Cards */
     .admin-card {
       background: var(--admin-card-bg);
       border: 1px solid var(--admin-border);
@@ -269,92 +408,151 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--admin-border);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .admin-card-header h3 {
       font-size: 1.15rem;
+      font-weight: 800;
       color: #fff;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    /* Form Controls */
-    .admin-form-group {
+    /* Users Toolbar */
+    .users-toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 18px;
-    }
-
-    .admin-form-group label {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .admin-form-group input,
-    .admin-form-group textarea,
-    .admin-form-group select {
-      width: 100%;
-      background: var(--bg-card);
-      border: 1px solid var(--admin-border);
-      color: #fff;
-      border-radius: var(--radius-sm);
+      background: rgba(10, 11, 14, 0.75);
       padding: 12px 14px;
-      font-size: 0.92rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--admin-border);
+    }
+
+    .users-toolbar-left {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      min-width: 260px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .users-toolbar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-filter-box {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-filter-box input {
+      width: 100%;
+      background: #14161f;
+      border: 1px solid var(--admin-border);
+      padding: 8px 12px 8px 36px;
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-size: 0.88rem;
       outline: none;
       transition: border-color 0.2s;
     }
 
-    .admin-form-group input:focus,
-    .admin-form-group textarea:focus {
+    .search-filter-box input:focus {
       border-color: var(--admin-gold);
     }
 
-    /* Tables */
+    .search-filter-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .filter-select {
+      background: #14161f;
+      border: 1px solid var(--admin-border);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Table */
     .admin-table-wrapper {
       overflow-x: auto;
       border: 1px solid var(--admin-border);
       border-radius: var(--radius-md);
       background: var(--admin-card-bg);
+      -webkit-overflow-scrolling: touch;
     }
 
     .admin-table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
 
     .admin-table th, .admin-table td {
-      padding: 14px 18px;
+      padding: 14px 16px;
       border-bottom: 1px solid var(--admin-border);
+      vertical-align: middle;
     }
 
     .admin-table th {
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.45);
       color: var(--admin-gold);
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
     }
 
-    .admin-table tr:hover {
-      background: rgba(255, 255, 255, 0.02);
+    .admin-table tbody tr {
+      transition: background-color 0.25s ease;
+    }
+
+    .admin-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    @keyframes rowFlashGold {
+      0% { background: rgba(252, 210, 24, 0.35); }
+      100% { background: transparent; }
+    }
+    .row-new-signup {
+      animation: rowFlashGold 3.5s ease-out;
     }
 
     /* Badges */
     .role-badge {
-      padding: 3px 10px;
+      padding: 3px 8px;
       border-radius: var(--radius-full);
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .role-badge.admin {
@@ -364,31 +562,163 @@
     }
 
     .role-badge.user {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-secondary);
+      background: rgba(52, 152, 219, 0.15);
+      color: #3498db;
+      border: 1px solid rgba(52, 152, 219, 0.3);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    .status-pill.active {
+      background: rgba(46, 204, 113, 0.15);
+      color: var(--admin-green);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+
+    .status-pill.suspended {
+      background: rgba(229, 9, 20, 0.15);
+      color: var(--admin-red);
+      border: 1px solid rgba(229, 9, 20, 0.3);
+    }
+
+    .device-badge {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .uid-badge {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .uid-badge:hover {
+      color: var(--admin-gold);
+      background: rgba(252, 210, 24, 0.1);
     }
 
     /* Buttons */
     .btn-action-sm {
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.78rem;
+      font-weight: 700;
       cursor: pointer;
       border: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: opacity 0.2s;
+      gap: 5px;
+      transition: opacity 0.2s, transform 0.1s;
+      white-space: nowrap;
     }
 
     .btn-action-sm:hover {
       opacity: 0.9;
+      transform: translateY(-1px);
     }
 
+    .btn-inspect { background: rgba(255, 255, 255, 0.12); color: #fff; }
     .btn-promote { background: var(--admin-gold); color: #000; }
-    .btn-demote { background: #555; color: #fff; }
+    .btn-demote { background: #444; color: #fff; }
+    .btn-suspend { background: rgba(229, 9, 20, 0.2); color: #ff6b6b; border: 1px solid rgba(229,9,20,0.3); }
+    .btn-activate { background: rgba(46, 204, 113, 0.2); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
     .btn-danger-sm { background: var(--color-red); color: #fff; }
+
+    .btn-primary-action {
+      background: var(--admin-gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary-action:hover {
+      background: #e5be15;
+      transform: translateY(-1px);
+    }
+
+    /* Modals */
+    .admin-modal-card {
+      max-width: 540px !important;
+      width: 100% !important;
+    }
+
+    .user-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+
+    .user-modal-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--admin-gold);
+      box-shadow: 0 4px 14px rgba(252, 210, 24, 0.3);
+    }
+
+    .user-modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .user-modal-field {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--admin-border);
+    }
+
+    .user-modal-field label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .user-modal-field span {
+      font-size: 0.88rem;
+      color: #fff;
+      font-weight: 600;
+      word-break: break-all;
+    }
 
     /* Traffic Gauges */
     .traffic-row {
@@ -429,54 +759,11 @@
       color: var(--admin-gold);
     }
 
-    /* Primary Action Buttons */
-    .btn-primary-action {
-      background: var(--admin-gold);
-      color: #000;
-      font-weight: 700;
-      font-size: 0.92rem;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 10px 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .btn-primary-action:hover {
-      background: #e5be15;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(252, 210, 24, 0.35);
-    }
-
-    .btn-ghost.text-danger {
-      border: 1px solid rgba(229, 9, 20, 0.4) !important;
-      color: #ff5252 !important;
-      background: rgba(229, 9, 20, 0.08);
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: var(--radius-sm);
-      padding: 10px 18px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-ghost.text-danger:hover {
-      background: rgba(229, 9, 20, 0.2);
-      border-color: #ff5252 !important;
-    }
-
-    /* 100% Mobile Responsive Controls */
+    /* Mobile Responsive */
     @media (max-width: 768px) {
       .admin-navbar {
-        padding: 10px 16px;
-        height: auto;
-        min-height: 60px;
-        flex-wrap: wrap;
-        gap: 12px;
+        padding: 0 16px;
+        height: 60px;
       }
       .admin-shell {
         padding: 16px 12px 40px;
@@ -487,61 +774,42 @@
         gap: 12px;
         margin-bottom: 20px;
       }
-      .admin-tab-bar {
-        overflow-x: auto;
-        padding-bottom: 8px;
-        gap: 6px;
-        -webkit-overflow-scrolling: touch;
-      }
-      .admin-tab-btn {
-        padding: 8px 14px;
-        font-size: 0.84rem;
-        white-space: nowrap;
-        flex-shrink: 0;
+      .admin-title-row h1 {
+        font-size: 1.4rem;
       }
       .kpi-grid {
         grid-template-columns: 1fr;
         gap: 12px;
       }
       .admin-card {
-        padding: 18px 14px;
-        margin-bottom: 20px;
+        padding: 16px 14px;
+        margin-bottom: 18px;
       }
-      .admin-table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+      .user-modal-grid {
+        grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 480px) {
       .admin-nav-right {
-        width: 100%;
-        justify-content: space-between;
         gap: 8px;
       }
       .admin-user-pill {
-        padding: 4px 10px;
-        font-size: 0.8rem;
+        padding: 4px 8px;
+        font-size: 0.78rem;
       }
-      .admin-card-header {
+      .admin-nav-badge {
+        display: none;
+      }
+      .users-toolbar {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: stretch;
       }
-      .traffic-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-      .traffic-label {
+      .users-toolbar-left, .users-toolbar-right {
         width: 100%;
       }
-      .traffic-bar-bg {
+      .filter-select {
         width: 100%;
-      }
-      .btn-primary-action {
-        width: 100%;
-        justify-content: center;
       }
     }
   </style>
@@ -551,21 +819,21 @@
   <header class="admin-navbar">
     <div class="admin-nav-left">
       <a href="./admin.html" class="admin-brand">
-        <img src="../assets/icons/logo-header.svg" alt="Vynora" style="height: 32px; width: auto;" />
+        <img src="../assets/icons/logo-header.svg" alt="Vynora" style="height: 30px; width: auto;" />
       </a>
-      <span class="admin-nav-badge"><i class="fas fa-user-shield"></i> Admin Control</span>
+      <span class="admin-nav-badge"><i class="fas fa-shield-alt"></i> Executive Control</span>
     </div>
 
     <div class="admin-nav-right">
-      <a href="./homepage.html" class="btn-ghost" style="font-size: 0.85rem; padding: 6px 14px; text-decoration: none; border: 1px solid var(--admin-border);">
-        <i class="fas fa-external-link-alt"></i> View Public Website
+      <a href="./homepage.html" class="btn-ghost" style="font-size: 0.84rem; padding: 6px 12px; text-decoration: none; border: 1px solid var(--admin-border);">
+        <i class="fas fa-external-link-alt"></i> <span class="hide-sm">View Website</span>
       </a>
       <div class="admin-user-pill">
-        <img id="admin-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Admin" />
+        <img id="admin-avatar" src="../assets/icons/logo.svg" alt="Admin" />
         <span id="admin-name">Admin</span>
       </div>
-      <button type="button" class="btn-ghost text-danger" id="btn-admin-logout" style="font-size: 0.85rem; padding: 6px 14px; border: 1px solid rgba(229,9,20,0.3); border-radius: var(--radius-sm); cursor: pointer;">
-        <i class="fas fa-sign-out-alt"></i> Sign Out
+      <button type="button" class="btn-ghost text-danger" id="btn-admin-logout" style="font-size: 0.84rem; padding: 6px 12px; border: 1px solid rgba(229,9,20,0.3); border-radius: var(--radius-sm); cursor: pointer;" title="Sign out of command center">
+        <i class="fas fa-sign-out-alt"></i> <span class="hide-sm">Sign Out</span>
       </button>
     </div>
   </header>
@@ -575,12 +843,15 @@
     <div class="admin-title-row">
       <div>
         <h1><i class="fas fa-tachometer-alt text-gold"></i> Platform Command Center</h1>
-        <p>Monitor real-time audience traffic, manage platform API keys, oversee registered users, and moderate discussions.</p>
+        <p>Real-time user registration stream, audience traffic analytics, TMDB gateway keys, and community moderation.</p>
       </div>
-      <div id="api-status-badge">
-        <span class="badge-admin-pill" style="font-size: 0.82rem; padding: 6px 14px;">
-          <i class="fas fa-circle text-gold fa-beat" style="font-size: 0.6rem;"></i> Live TMDB Ready
-        </span>
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div class="live-pulse-indicator" id="admin-live-pulse">
+          <span class="pulse-dot-green"></span> Live Realtime Stream Active
+        </div>
+        <button type="button" class="btn-ghost" id="btn-toggle-sound" style="font-size: 0.82rem; padding: 6px 12px; border: 1px solid var(--admin-border);" title="Play subtle chime on new sign-up">
+          <i class="fas fa-volume-up text-gold"></i> Chime: ON
+        </button>
       </div>
     </div>
 
@@ -593,7 +864,18 @@
         <div class="kpi-info">
           <h4>Registered Users</h4>
           <div class="kpi-number" id="kpi-users-count">--</div>
-          <small>Active Firestore Accounts</small>
+          <small id="kpi-users-sub">Total database accounts</small>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-box kpi-icon-today">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="kpi-info">
+          <h4>Signups Today</h4>
+          <div class="kpi-number" id="kpi-signups-today">0</div>
+          <small id="kpi-signups-today-sub">Registered in past 24h</small>
         </div>
       </div>
 
@@ -604,18 +886,7 @@
         <div class="kpi-info">
           <h4>Total Page Visits</h4>
           <div class="kpi-number" id="kpi-visits-count">--</div>
-          <small id="kpi-last-visit">Across all routes</small>
-        </div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-icon-box kpi-icon-comments">
-          <i class="fas fa-comments"></i>
-        </div>
-        <div class="kpi-info">
-          <h4>Movie Discussions</h4>
-          <div class="kpi-number" id="kpi-comments-count">--</div>
-          <small>Community reviews &amp; replies</small>
+          <small id="kpi-last-visit">Across all public routes</small>
         </div>
       </div>
 
@@ -633,14 +904,14 @@
 
     <!-- Tabs Navigation -->
     <nav class="admin-tabs-nav">
-      <button type="button" class="admin-tab-btn active" data-tab="tab-traffic">
+      <button type="button" class="admin-tab-btn active" data-tab="tab-users">
+        <i class="fas fa-user-astronaut"></i> Live User Monitor &amp; Directory
+      </button>
+      <button type="button" class="admin-tab-btn" data-tab="tab-traffic">
         <i class="fas fa-chart-pie"></i> Audience Traffic &amp; Visits
       </button>
       <button type="button" class="admin-tab-btn" data-tab="tab-api-settings">
         <i class="fas fa-cogs"></i> TMDB API &amp; Controls
-      </button>
-      <button type="button" class="admin-tab-btn" data-tab="tab-users">
-        <i class="fas fa-user-friends"></i> User Management
       </button>
       <button type="button" class="admin-tab-btn" data-tab="tab-moderation">
         <i class="fas fa-shield-alt"></i> Comment Moderation
@@ -650,8 +921,99 @@
       </button>
     </nav>
 
-    <!-- Tab 1: Traffic & Page Visits -->
-    <section class="admin-pane active" id="tab-traffic">
+    <!-- Tab 1: Live User Monitor & Directory (Active Default) -->
+    <section class="admin-pane active" id="tab-users">
+      <!-- Live Signups Stream Card -->
+      <div class="live-stream-card">
+        <div class="live-stream-header">
+          <h3>
+            <i class="fas fa-broadcast-tower text-gold"></i>
+            Live Sign-Up Stream (Instant Real-Time Feed)
+          </h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">
+            <i class="fas fa-sync fa-spin text-gold" style="font-size: 0.7rem;"></i> Monitoring incoming registrations in real-time
+          </span>
+        </div>
+        <div class="live-stream-feed" id="live-signups-feed">
+          <div style="color: var(--text-muted); font-size: 0.88rem; padding: 12px 0;">
+            <i class="fas fa-spinner fa-spin"></i> Establishing real-time listener...
+          </div>
+        </div>
+      </div>
+
+      <!-- User Directory Card -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h3><i class="fas fa-users text-gold"></i> Complete Registered Users Directory</h3>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-ghost" id="btn-export-users-csv" style="font-size: 0.84rem; padding: 6px 14px; border: 1px solid var(--admin-border);" title="Export users list to CSV">
+              <i class="fas fa-file-csv text-gold"></i> Export CSV
+            </button>
+            <button type="button" class="btn-primary-action" id="btn-open-add-user-modal" style="font-size: 0.84rem; padding: 6px 14px;">
+              <i class="fas fa-user-plus"></i> Add User
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="users-toolbar">
+          <div class="users-toolbar-left">
+            <div class="search-filter-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="admin-user-search" placeholder="Search by name, email, or user ID..." autocomplete="off" />
+            </div>
+            <select id="admin-filter-role" class="filter-select">
+              <option value="all">All Roles</option>
+              <option value="user">Members Only</option>
+              <option value="admin">Admins Only</option>
+            </select>
+            <select id="admin-filter-status" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="active">Active Accounts</option>
+              <option value="suspended">Suspended Accounts</option>
+            </select>
+          </div>
+          <div class="users-toolbar-right">
+            <select id="admin-sort-users" class="filter-select">
+              <option value="newest">Sort: Newest Sign-Ups</option>
+              <option value="oldest">Sort: Oldest Accounts</option>
+              <option value="alpha">Sort: Name (A &rarr; Z)</option>
+            </select>
+            <button type="button" class="btn-ghost" id="btn-refresh-users" style="font-size: 0.84rem; padding: 8px 12px; border: 1px solid var(--admin-border);" title="Force directory reload">
+              <i class="fas fa-sync"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>User / Identity</th>
+                <th>Email Address</th>
+                <th>Device</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Registered At</th>
+                <th>Last Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body">
+              <tr>
+                <td colspan="8" style="text-align:center; padding: 28px; color: var(--text-muted);">
+                  <i class="fas fa-spinner fa-spin"></i> Loading real-time user directory...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Traffic & Page Visits -->
+    <section class="admin-pane" id="tab-traffic">
       <div class="admin-card">
         <div class="admin-card-header">
           <h3><i class="fas fa-chart-bar text-gold"></i> Page Visit Distribution</h3>
@@ -665,22 +1027,22 @@
       </div>
     </section>
 
-    <!-- Tab 2: TMDB API & System Controls -->
+    <!-- Tab 3: TMDB API & System Controls -->
     <section class="admin-pane" id="tab-api-settings">
       <div class="admin-card">
         <div class="admin-card-header">
           <h3><i class="fas fa-key text-gold"></i> System TMDB API Key (Admin Protected)</h3>
-          <span style="font-size: 0.82rem; color: var(--text-muted);">This platform key powers all public blockbusters, actor bios &amp; trailers.</span>
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Powers all public blockbusters, actor bios &amp; trailers.</span>
         </div>
         
         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px;">
-          Only administrators can configure this key. It is strictly hidden from regular visitors and automatically deployed across the application.
+          Only platform owners can configure this key. It is strictly hidden from regular visitors and automatically deployed across the application.
         </p>
 
         <div class="admin-form-group">
           <label for="admin-tmdb-input">The Movie Database (TMDB) API Key (v3):</label>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <input type="text" id="admin-tmdb-input" placeholder="e.g. 8414ff428055f7883c3326ffdd34b2d6" style="flex: 1; min-width: 280px;" />
+            <input type="text" id="admin-tmdb-input" placeholder="e.g. d7d34266a6214a3ad6c756ff07eac392" style="flex: 1; min-width: 280px;" />
             <button type="button" class="btn-primary-action" id="btn-save-admin-key">
               <i class="fas fa-check-circle"></i> Verify &amp; Save Platform Key
             </button>
@@ -720,34 +1082,6 @@
           <button type="button" class="btn-ghost" id="btn-clear-announcement" style="border: 1px solid var(--admin-border);">
             Dismiss Announcement
           </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Tab 3: User Management -->
-    <section class="admin-pane" id="tab-users">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <h3><i class="fas fa-users text-gold"></i> Registered User Directory</h3>
-          <button type="button" class="btn-ghost" id="btn-refresh-users" style="font-size: 0.8rem; padding: 6px 12px; border: 1px solid var(--admin-border);">
-            <i class="fas fa-sync"></i> Refresh
-          </button>
-        </div>
-        <div class="admin-table-wrapper">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>User ID</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="admin-users-table-body">
-              <tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading user accounts...</td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </section>
@@ -809,6 +1143,63 @@
     </section>
   </main>
 
+  <!-- User Details Inspection Modal -->
+  <div class="psalm-modal-backdrop" id="admin-user-details-modal">
+    <div class="psalm-modal-card admin-modal-card">
+      <div class="modal-header">
+        <h3><i class="fas fa-id-card text-gold"></i> Member Profile Dossier</h3>
+        <button class="modal-close-btn" id="btn-close-user-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="user-modal-body-content">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" id="user-modal-actions-footer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Add User Modal -->
+  <div class="psalm-modal-backdrop" id="admin-add-user-modal">
+    <div class="psalm-modal-card admin-modal-card">
+      <div class="modal-header">
+        <h3><i class="fas fa-user-plus text-gold"></i> Provision New Member</h3>
+        <button class="modal-close-btn" id="btn-close-add-user-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="admin-create-user-form">
+          <div class="admin-form-group">
+            <label for="new-user-name">Full Name</label>
+            <input type="text" id="new-user-name" placeholder="e.g. Sarah Connor" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="new-user-email">Email Address</label>
+            <input type="email" id="new-user-email" placeholder="sarah@example.com" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="new-user-role">Account Role</label>
+            <select id="new-user-role">
+              <option value="user" selected>Member (Standard User)</option>
+              <option value="admin">Administrator (Command Center Access)</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label for="new-user-genres">Preferred Genres (comma separated)</label>
+            <input type="text" id="new-user-genres" value="Action, Science Fiction" />
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 16px;">
+            <button type="submit" class="btn-primary-action" style="flex: 1;">
+              <i class="fas fa-check"></i> Create User Record
+            </button>
+            <button type="button" class="btn-ghost" id="btn-cancel-add-user" style="border: 1px solid var(--admin-border);">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -840,21 +1231,19 @@
         return false;
       }
 
-      // If no admin session, allow 1.2s for Firebase async restore before redirecting
       if (!hasAdminSession && !Vynora.auth.currentUser) {
         setTimeout(() => {
           const isStillAdmin = (localStorage.getItem('vynora_admin_session') === 'active') || (localStorage.getItem('psalmstrings_admin_session') === 'active') || Vynora.auth.isAdmin();
           if (!isStillAdmin) {
-            window.location.href = './admin-login.html';
+            window.location.href = './signin.html';
           }
         }, 1200);
       }
 
-      // Listen for auth state
       Vynora.auth.onAuth((user, profile) => {
         const authorized = verifyAccess(user, profile);
         if (!authorized && !hasAdminSession) {
-          window.location.href = './admin-login.html';
+          window.location.href = './signin.html';
         }
       });
 
@@ -865,10 +1254,44 @@
         localStorage.removeItem('vynora_admin_email');
         localStorage.removeItem('psalmstrings_admin_email');
         await Vynora.auth.logout();
-        window.location.href = './admin-login.html';
+        window.location.href = './signin.html';
       };
 
-      // 2. Tab Navigation
+      // 2. Audio Chime Control
+      let soundEnabled = localStorage.getItem('vynora_admin_chime') !== 'false';
+      const chimeBtn = document.getElementById('btn-toggle-sound');
+      const updateChimeBtn = () => {
+        chimeBtn.innerHTML = soundEnabled ? '<i class="fas fa-volume-up text-gold"></i> Chime: ON' : '<i class="fas fa-volume-mute text-muted"></i> Chime: OFF';
+      };
+      updateChimeBtn();
+      chimeBtn.onclick = () => {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('vynora_admin_chime', soundEnabled ? 'true' : 'false');
+        updateChimeBtn();
+        if (soundEnabled) playSignupChime();
+      };
+
+      function playSignupChime() {
+        if (!soundEnabled) return;
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+          gain.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.45);
+        } catch (e) {}
+      }
+
+      // 3. Tab Switching
       document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.onclick = () => {
           document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
@@ -880,27 +1303,513 @@
         };
       });
 
-      // 3. Load Overview Data & KPIs
-      loadKpis();
+      // 4. Real-time User Data State
+      let allUsersCache = [];
+      let recentNewUids = new Set();
+
+      function formatTimestamp(ts, iso) {
+        let date = null;
+        if (ts && typeof ts.toDate === 'function') {
+          date = ts.toDate();
+        } else if (ts && ts.seconds) {
+          date = new Date(ts.seconds * 1000);
+        } else if (iso) {
+          date = new Date(iso);
+        }
+        if (!date || isNaN(date.getTime())) return { full: 'Recently', relative: 'Recently' };
+
+        const full = date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const diffSec = Math.floor((Date.now() - date.getTime()) / 1000);
+        let relative = 'Just now';
+        if (diffSec < 60) relative = 'Just now';
+        else if (diffSec < 3600) relative = `${Math.floor(diffSec / 60)}m ago`;
+        else if (diffSec < 86400) relative = `${Math.floor(diffSec / 3600)}h ago`;
+        else relative = `${Math.floor(diffSec / 86400)}d ago`;
+
+        return { full, relative, date };
+      }
+
+      // Render Live Signups Stream Feed
+      function renderLiveFeed(users) {
+        const feedContainer = document.getElementById('live-signups-feed');
+        if (!users || !users.length) {
+          feedContainer.innerHTML = `
+            <div style="color: var(--text-muted); font-size: 0.88rem; padding: 10px 0; grid-column: 1 / -1;">
+              <i class="fas fa-user-clock text-gold"></i> Awaiting new user registrations. New sign-ups on web or mobile will appear here instantaneously!
+            </div>
+          `;
+          return;
+        }
+
+        const topRecent = users.slice(0, 4);
+        feedContainer.innerHTML = topRecent.map(u => {
+          const name = u.name || u.displayName || 'New Member';
+          const email = u.email || 'No email provided';
+          const avatar = u.avatarUrl || u.photoURL || Vynora.CONFIG.DEFAULT_AVATAR;
+          const { full, relative } = formatTimestamp(u.createdAt, u.createdIso);
+          const isMobile = u.device === 'Mobile';
+          const isJustNow = recentNewUids.has(u.uid);
+
+          return `
+            <div class="signup-feed-item ${isJustNow ? 'row-new-signup' : ''}">
+              <img src="${avatar}" alt="${name}" class="feed-avatar" onerror="this.src='${Vynora.CONFIG.DEFAULT_AVATAR}'">
+              <div class="feed-info">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                  <span class="feed-name">${name}</span>
+                  ${isJustNow ? '<span class="feed-badge-new"><i class="fas fa-sparkles"></i> NEW</span>' : ''}
+                </div>
+                <div class="feed-email">${email}</div>
+                <div class="feed-meta">
+                  <span title="${full}"><i class="far fa-clock"></i> ${relative}</span>
+                  <span>&bull;</span>
+                  <span><i class="fas ${isMobile ? 'fa-mobile-alt' : 'fa-laptop'}"></i> ${u.device || 'Web'}</span>
+                </div>
+              </div>
+              <button type="button" class="btn-action-sm btn-inspect" onclick="inspectUser('${u.uid}')" title="Inspect dossier">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Users Table with Filtering & Sorting
+      function renderUsersTable() {
+        const tbody = document.getElementById('admin-users-table-body');
+        const searchTerm = (document.getElementById('admin-user-search').value || '').toLowerCase().trim();
+        const roleFilter = document.getElementById('admin-filter-role').value;
+        const statusFilter = document.getElementById('admin-filter-status').value;
+        const sortFilter = document.getElementById('admin-sort-users').value;
+
+        let filtered = allUsersCache.filter(u => {
+          const name = (u.name || u.displayName || '').toLowerCase();
+          const email = (u.email || '').toLowerCase();
+          const uid = (u.uid || '').toLowerCase();
+          const matchesSearch = !searchTerm || name.includes(searchTerm) || email.includes(searchTerm) || uid.includes(searchTerm);
+
+          const role = (u.role || 'user').toLowerCase();
+          const matchesRole = (roleFilter === 'all') || (roleFilter === role);
+
+          const status = (u.status || 'active').toLowerCase();
+          const matchesStatus = (statusFilter === 'all') || (statusFilter === status);
+
+          return matchesSearch && matchesRole && matchesStatus;
+        });
+
+        // Sorting
+        filtered.sort((a, b) => {
+          if (sortFilter === 'alpha') {
+            const nameA = (a.name || a.displayName || '').toLowerCase();
+            const nameB = (b.name || b.displayName || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+          }
+          const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdIso ? new Date(a.createdIso).getTime() : 0);
+          const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdIso ? new Date(b.createdIso).getTime() : 0);
+          return sortFilter === 'oldest' ? (timeA - timeB) : (timeB - timeA);
+        });
+
+        if (!filtered.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align:center; padding: 32px; color: var(--text-muted);">
+                <i class="fas fa-search" style="font-size: 1.5rem; margin-bottom: 8px; display:block; opacity:0.5;"></i>
+                No registered users matched the active filters.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(u => {
+          const name = u.name || u.displayName || 'Cinema Fan';
+          const email = u.email || 'None';
+          const avatar = u.avatarUrl || u.photoURL || Vynora.CONFIG.DEFAULT_AVATAR;
+          const isAdmin = u.role === 'admin' || email.toLowerCase() === 'admin@vynora.com' || email.toLowerCase() === 'admin@psalmstrings.com';
+          const isSuspended = u.status === 'suspended';
+          const { full: createdFull, relative: createdRel } = formatTimestamp(u.createdAt, u.createdIso);
+          const { relative: loginRel } = formatTimestamp(u.lastLoginAt, u.lastLoginIso);
+          const isNew = recentNewUids.has(u.uid);
+          const device = u.device || 'Web';
+
+          return `
+            <tr class="${isNew ? 'row-new-signup' : ''}">
+              <td>
+                <div style="display:flex; align-items:center; gap: 10px;">
+                  <img src="${avatar}" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid rgba(252,210,24,0.4);" onerror="this.src='${Vynora.CONFIG.DEFAULT_AVATAR}'">
+                  <div>
+                    <strong style="color:#fff; font-size:0.9rem;">${name}</strong>
+                    <div style="margin-top:2px;">
+                      <span class="uid-badge" onclick="copyUid('${u.uid}')" title="Click to copy full UID">
+                        <i class="far fa-copy"></i> ${u.uid.substring(0, 8)}...
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <a href="mailto:${email}" style="color:var(--text-secondary); text-decoration:none;">${email}</a>
+              </td>
+              <td>
+                <span class="device-badge">
+                  <i class="fas ${device === 'Mobile' ? 'fa-mobile-alt' : 'fa-laptop'}"></i> ${device}
+                </span>
+              </td>
+              <td>
+                <span class="role-badge ${isAdmin ? 'admin' : 'user'}">
+                  <i class="fas ${isAdmin ? 'fa-shield-alt' : 'fa-user'}"></i> ${isAdmin ? 'Admin' : 'Member'}
+                </span>
+              </td>
+              <td>
+                <span class="status-pill ${isSuspended ? 'suspended' : 'active'}">
+                  <i class="fas fa-circle" style="font-size:0.5rem;"></i> ${isSuspended ? 'Suspended' : 'Active'}
+                </span>
+              </td>
+              <td>
+                <span title="${createdFull}">${createdRel}</span>
+                <small style="display:block; color:var(--text-muted); font-size:0.74rem;">${createdFull}</small>
+              </td>
+              <td>
+                <span style="color:var(--text-secondary); font-size:0.8rem;">${loginRel}</span>
+              </td>
+              <td>
+                <div style="display:flex; align-items:center; gap: 6px; flex-wrap:wrap;">
+                  <button type="button" class="btn-action-sm btn-inspect" onclick="inspectUser('${u.uid}')" title="Inspect user profile dossier">
+                    <i class="fas fa-eye"></i> View
+                  </button>
+                  ${isAdmin ? `
+                    <button type="button" class="btn-action-sm btn-demote" onclick="changeRole('${u.uid}', 'user')" title="Demote to standard member">
+                      Demote
+                    </button>
+                  ` : `
+                    <button type="button" class="btn-action-sm btn-promote" onclick="changeRole('${u.uid}', 'admin')" title="Grant administrator privileges">
+                      <i class="fas fa-shield-alt"></i> Make Admin
+                    </button>
+                  `}
+                  ${isSuspended ? `
+                    <button type="button" class="btn-action-sm btn-activate" onclick="toggleStatus('${u.uid}', 'active')" title="Reactivate user">
+                      <i class="fas fa-check"></i> Activate
+                    </button>
+                  ` : `
+                    <button type="button" class="btn-action-sm btn-suspend" onclick="toggleStatus('${u.uid}', 'suspended')" title="Suspend account">
+                      <i class="fas fa-ban"></i> Suspend
+                    </button>
+                  `}
+                  <button type="button" class="btn-action-sm btn-danger-sm" onclick="removeUserRecord('${u.uid}', '${name.replace(/'/g, "\\'")}')" title="Permanently delete from database">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Update KPI Statistics based on real-time data
+      function updateKPIStats(users) {
+        document.getElementById('kpi-users-count').textContent = users.length;
+        document.getElementById('kpi-users-sub').textContent = `${users.length} active account${users.length === 1 ? '' : 's'}`;
+
+        // Compute signups in the past 24 hours
+        const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+        const signupsToday = users.filter(u => {
+          const t = u.createdAt?.toMillis ? u.createdAt.toMillis() : (u.createdIso ? new Date(u.createdIso).getTime() : 0);
+          return t >= oneDayAgo;
+        }).length;
+
+        document.getElementById('kpi-signups-today').textContent = `+${signupsToday}`;
+        document.getElementById('kpi-signups-today-sub').textContent = signupsToday === 1 ? '1 new user today' : `${signupsToday} new users today`;
+      }
+
+      // 5. Establish Real-Time Listener on Users Collection
+      let isFirstSnapshot = true;
+      Vynora.admin.subscribeUsers((users, newSignups) => {
+        allUsersCache = users;
+
+        if (!isFirstSnapshot && newSignups && newSignups.length > 0) {
+          newSignups.forEach(u => {
+            recentNewUids.add(u.uid);
+            playSignupChime();
+            const name = u.name || u.displayName || 'New Member';
+            Vynora.ui.showToast(`🎉 New user registered: ${name} (${u.email || 'Email'})`, 'success', 6000);
+          });
+        }
+        isFirstSnapshot = false;
+
+        updateKPIStats(allUsersCache);
+        renderLiveFeed(allUsersCache);
+        renderUsersTable();
+      });
+
+      // Search & Filters Listeners
+      document.getElementById('admin-user-search').addEventListener('input', renderUsersTable);
+      document.getElementById('admin-filter-role').addEventListener('change', renderUsersTable);
+      document.getElementById('admin-filter-status').addEventListener('change', renderUsersTable);
+      document.getElementById('admin-sort-users').addEventListener('change', renderUsersTable);
+      document.getElementById('btn-refresh-users').onclick = async () => {
+        allUsersCache = await Vynora.admin.getAllUsers();
+        updateKPIStats(allUsersCache);
+        renderLiveFeed(allUsersCache);
+        renderUsersTable();
+        Vynora.ui.showToast('User directory refreshed.', 'info');
+      };
+
+      // Copy UID Helper
+      window.copyUid = (uid) => {
+        navigator.clipboard.writeText(uid);
+        Vynora.ui.showToast(`UID copied to clipboard: ${uid}`, 'info');
+      };
+
+      // Inspect User Modal
+      window.inspectUser = (uid) => {
+        const u = allUsersCache.find(x => x.uid === uid);
+        if (!u) return;
+
+        const name = u.name || u.displayName || 'Cinema Fan';
+        const email = u.email || 'None';
+        const avatar = u.avatarUrl || u.photoURL || Vynora.CONFIG.DEFAULT_AVATAR;
+        const isAdmin = u.role === 'admin' || email.toLowerCase() === 'admin@vynora.com';
+        const isSuspended = u.status === 'suspended';
+        const { full: createdFull } = formatTimestamp(u.createdAt, u.createdIso);
+        const { full: loginFull } = formatTimestamp(u.lastLoginAt, u.lastLoginIso);
+        const genres = Array.isArray(u.genres) ? u.genres.join(', ') : (u.genres || 'Action, Science Fiction');
+
+        const modal = document.getElementById('admin-user-details-modal');
+        const body = document.getElementById('user-modal-body-content');
+        const footer = document.getElementById('user-modal-actions-footer');
+
+        body.innerHTML = `
+          <div class="user-modal-header">
+            <img src="${avatar}" alt="${name}" class="user-modal-avatar" onerror="this.src='${Vynora.CONFIG.DEFAULT_AVATAR}'">
+            <div style="flex:1;">
+              <h2 style="font-size:1.3rem; font-weight:800; color:#fff; margin-bottom:4px;">${name}</h2>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span class="role-badge ${isAdmin ? 'admin' : 'user'}">${isAdmin ? 'Administrator' : 'Member'}</span>
+                <span class="status-pill ${isSuspended ? 'suspended' : 'active'}">${isSuspended ? 'Suspended' : 'Active'}</span>
+                <span class="device-badge"><i class="fas ${u.device === 'Mobile' ? 'fa-mobile-alt' : 'fa-laptop'}"></i> ${u.device || 'Desktop'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="user-modal-grid">
+            <div class="user-modal-field">
+              <label>Email Address</label>
+              <span><a href="mailto:${email}" style="color:var(--admin-gold); text-decoration:none;">${email}</a></span>
+            </div>
+            <div class="user-modal-field">
+              <label>User ID (UID)</label>
+              <span><code style="font-size:0.8rem;">${u.uid}</code></span>
+            </div>
+            <div class="user-modal-field">
+              <label>Registered On</label>
+              <span>${createdFull}</span>
+            </div>
+            <div class="user-modal-field">
+              <label>Last Activity / Login</label>
+              <span>${loginFull}</span>
+            </div>
+            <div class="user-modal-field" style="grid-column: 1 / -1;">
+              <label>Preferred Movie Genres</label>
+              <span>${genres}</span>
+            </div>
+          </div>
+        `;
+
+        footer.innerHTML = `
+          <button type="button" class="btn-ghost" onclick="document.getElementById('admin-user-details-modal').style.display='none'">Close</button>
+          ${isAdmin ? `
+            <button type="button" class="btn-action-sm btn-demote" onclick="changeRole('${u.uid}', 'user'); document.getElementById('admin-user-details-modal').style.display='none';">Demote to Member</button>
+          ` : `
+            <button type="button" class="btn-action-sm btn-promote" onclick="changeRole('${u.uid}', 'admin'); document.getElementById('admin-user-details-modal').style.display='none';"><i class="fas fa-shield-alt"></i> Make Admin</button>
+          `}
+        `;
+
+        modal.style.display = 'flex';
+      };
+
+      document.getElementById('btn-close-user-modal').onclick = () => {
+        document.getElementById('admin-user-details-modal').style.display = 'none';
+      };
+
+      // Add User Modal
+      document.getElementById('btn-open-add-user-modal').onclick = () => {
+        document.getElementById('admin-add-user-modal').style.display = 'flex';
+      };
+      document.getElementById('btn-close-add-user-modal').onclick = () => {
+        document.getElementById('admin-add-user-modal').style.display = 'none';
+      };
+      document.getElementById('btn-cancel-add-user').onclick = () => {
+        document.getElementById('admin-add-user-modal').style.display = 'none';
+      };
+
+      document.getElementById('admin-create-user-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('new-user-name').value.trim();
+        const email = document.getElementById('new-user-email').value.trim();
+        const role = document.getElementById('new-user-role').value;
+        const genres = document.getElementById('new-user-genres').value.split(',').map(s => s.trim()).filter(Boolean);
+
+        try {
+          await Vynora.admin.createManualUser({ name, email, role, genres });
+          Vynora.ui.showToast(`User ${name} provisioned successfully!`, 'success');
+          document.getElementById('admin-create-user-form').reset();
+          document.getElementById('admin-add-user-modal').style.display = 'none';
+          allUsersCache = await Vynora.admin.getAllUsers();
+          renderLiveFeed(allUsersCache);
+          renderUsersTable();
+        } catch (err) {
+          Vynora.ui.showToast('Failed to create user: ' + err.message, 'error');
+        }
+      };
+
+      // CSV Export
+      document.getElementById('btn-export-users-csv').onclick = () => {
+        if (!allUsersCache.length) {
+          Vynora.ui.showToast('No user data to export.', 'info');
+          return;
+        }
+        let csv = 'UID,Name,Email,Role,Status,Device,Registered_At\n';
+        allUsersCache.forEach(u => {
+          const name = `"${(u.name || u.displayName || 'Member').replace(/"/g, '""')}"`;
+          const email = `"${(u.email || '').replace(/"/g, '""')}"`;
+          const role = u.role || 'user';
+          const status = u.status || 'active';
+          const device = u.device || 'Desktop';
+          const { full: created } = formatTimestamp(u.createdAt, u.createdIso);
+          csv += `${u.uid},${name},${email},${role},${status},${device},"${created}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vynora_users_directory_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        Vynora.ui.showToast('Exported users directory to CSV.', 'success');
+      };
+
+      // Role & Status Change Actions
+      window.changeRole = async (uid, role) => {
+        if (confirm(`Change this user's role to "${role}"?`)) {
+          await Vynora.admin.setUserRole(uid, role);
+          Vynora.ui.showToast(`User role updated to ${role}`, 'success');
+          const user = allUsersCache.find(x => x.uid === uid);
+          if (user) user.role = role;
+          renderUsersTable();
+        }
+      };
+
+      window.toggleStatus = async (uid, status) => {
+        const action = status === 'suspended' ? 'suspend' : 'reactivate';
+        if (confirm(`Are you sure you want to ${action} this user account?`)) {
+          await Vynora.admin.setUserStatus(uid, status);
+          Vynora.ui.showToast(`User account ${status === 'suspended' ? 'suspended' : 'activated'}.`, 'success');
+          const user = allUsersCache.find(x => x.uid === uid);
+          if (user) user.status = status;
+          renderUsersTable();
+        }
+      };
+
+      window.removeUserRecord = async (uid, name) => {
+        if (confirm(`Permanently delete user record for "${name}" (${uid})? This action cannot be undone.`)) {
+          await Vynora.admin.deleteUser(uid);
+          Vynora.ui.showToast(`User "${name}" removed from database.`, 'info');
+          allUsersCache = allUsersCache.filter(x => x.uid !== uid);
+          updateKPIStats(allUsersCache);
+          renderLiveFeed(allUsersCache);
+          renderUsersTable();
+        }
+      };
+
+      // 6. Traffic Analytics
+      async function loadTrafficAnalytics() {
+        const container = document.getElementById('traffic-breakdown-container');
+        try {
+          const analytics = await Vynora.analytics.getSummary();
+          const visits = analytics?.totalVisits || 1;
+          const pages = analytics?.pages || { homepage: 1, index: 1, 'movie-details': 0 };
+
+          document.getElementById('kpi-visits-count').textContent = visits.toLocaleString();
+
+          let html = `
+            <div style="margin-bottom: 24px;">
+              <h4 style="font-size: 0.95rem; color: #fff; margin-bottom: 14px;">Visits by Route</h4>
+          `;
+
+          Object.entries(pages).forEach(([pg, count]) => {
+            const pct = Math.round((count / visits) * 100);
+            html += `
+              <div class="traffic-row">
+                <div class="traffic-label">${pg}.html</div>
+                <div class="traffic-bar-bg">
+                  <div class="traffic-bar-fill" style="width: ${pct}%"></div>
+                </div>
+                <div class="traffic-val">${count} (${pct}%)</div>
+              </div>
+            `;
+          });
+          html += '</div>';
+          container.innerHTML = html;
+        } catch (e) {
+          container.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:16px;">Analytics summary available as page visits occur.</div>';
+        }
+      }
       loadTrafficAnalytics();
-      loadAdminApiKey();
-      loadUsersDirectory();
-      loadModerationComments();
-      loadCustomMovies();
-
-      // Refresh Buttons
       document.getElementById('btn-refresh-analytics').onclick = loadTrafficAnalytics;
-      document.getElementById('btn-refresh-users').onclick = loadUsersDirectory;
-      document.getElementById('btn-refresh-comments').onclick = loadModerationComments;
 
-      // 4. TMDB Key Verification & Saving
+      // 7. TMDB Platform Key Management
       const keyInput = document.getElementById('admin-tmdb-input');
       const verifyStatus = document.getElementById('admin-api-verify-status');
+
+      async function loadAdminApiKey() {
+        const cfg = await Vynora.admin.getSystemConfig();
+        if (cfg && cfg.tmdbApiKey) {
+          keyInput.value = cfg.tmdbApiKey;
+        } else {
+          keyInput.value = Vynora.tmdbApi.getApiKey();
+        }
+        if (cfg && cfg.siteAnnouncement) {
+          document.getElementById('announcement-text').value = cfg.siteAnnouncement;
+        }
+        // Test current latency
+        testTmdbLatency(keyInput.value);
+      }
+
+      async function testTmdbLatency(key) {
+        if (!key) {
+          document.getElementById('kpi-api-latency').textContent = 'Key: Missing';
+          return;
+        }
+        try {
+          const start = performance.now();
+          const res = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${key}&page=1`);
+          const lat = Math.round(performance.now() - start);
+          if (res.ok) {
+            document.getElementById('kpi-api-status').innerHTML = '<span style="color:var(--admin-green);">Live (Active)</span>';
+            document.getElementById('kpi-api-latency').textContent = `Latency: ${lat}ms`;
+          } else {
+            document.getElementById('kpi-api-status').innerHTML = '<span style="color:var(--admin-red);">HTTP Error</span>';
+            document.getElementById('kpi-api-latency').textContent = `Status: ${res.status}`;
+          }
+        } catch (e) {
+          document.getElementById('kpi-api-status').textContent = 'Offline';
+        }
+      }
+
+      loadAdminApiKey();
 
       document.getElementById('btn-save-admin-key').onclick = async () => {
         const val = keyInput.value.trim();
         if (!val) {
-          PsalmStrings.ui.showToast('Please enter an API key.', 'error');
+          Vynora.ui.showToast('Please enter an API key.', 'error');
           return;
         }
         verifyStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing key against TMDB API...';
@@ -910,187 +1819,50 @@
           const latency = Math.round(performance.now() - startTime);
 
           if (res.ok) {
-            await PsalmStrings.admin.saveSystemConfig({ tmdbApiKey: val });
-            verifyStatus.innerHTML = `<span class="text-success"><i class="fas fa-check-circle"></i> Connected to Live TMDB! Latency: ${latency}ms (Key Active)</span>`;
-            PsalmStrings.ui.showToast('Platform TMDB Key verified & saved!', 'success');
-            loadKpis();
+            await Vynora.admin.saveSystemConfig({ tmdbApiKey: val });
+            verifyStatus.innerHTML = `<span style="color:var(--admin-green);"><i class="fas fa-check-circle"></i> Connected to Live TMDB! Latency: ${latency}ms (Key Active)</span>`;
+            Vynora.ui.showToast('Platform TMDB Key verified & saved!', 'success');
+            testTmdbLatency(val);
           } else {
-            verifyStatus.innerHTML = `<span class="text-danger"><i class="fas fa-times-circle"></i> TMDB responded with HTTP ${res.status}. Invalid key.</span>`;
-            PsalmStrings.ui.showToast('Key verification failed.', 'error');
+            verifyStatus.innerHTML = `<span style="color:var(--admin-red);"><i class="fas fa-times-circle"></i> TMDB responded with HTTP ${res.status}. Invalid key.</span>`;
+            Vynora.ui.showToast('Key verification failed.', 'error');
           }
-        } catch (e) {
-          // If Firestore threw a permission notice or network hiccup, the key is still guaranteed active locally
-          PsalmStrings.tmdbApi.setApiKey(val);
-          verifyStatus.innerHTML = `<span class="text-success"><i class="fas fa-check-circle"></i> Connected to Live TMDB! (Key Saved &amp; Active)</span>`;
-          PsalmStrings.ui.showToast('Platform TMDB Key saved & active!', 'success');
-          loadKpis();
+        } catch (err) {
+          Vynora.tmdbApi.setApiKey(val);
+          verifyStatus.innerHTML = '<span style="color:var(--admin-green);"><i class="fas fa-check-circle"></i> Key active locally.</span>';
+          Vynora.ui.showToast('Platform TMDB Key saved & active!', 'success');
+          testTmdbLatency(val);
         }
       };
 
       document.getElementById('btn-clear-admin-key').onclick = async () => {
-        if (confirm("Are you sure you want to clear the platform API key? The site will revert to the offline curated catalog.")) {
+        if (confirm("Remove platform TMDB key? Public movie discovery will switch to offline fallback.")) {
+          await Vynora.admin.saveSystemConfig({ tmdbApiKey: '' });
+          Vynora.tmdbApi.setApiKey('');
           keyInput.value = '';
-          await PsalmStrings.admin.saveSystemConfig({ tmdbApiKey: '' });
-          PsalmStrings.tmdbApi.setApiKey('');
-          verifyStatus.innerHTML = '<span class="text-warning">Key cleared. Using curated catalog.</span>';
-          PsalmStrings.ui.showToast('Platform key removed.', 'info');
-          loadKpis();
+          verifyStatus.textContent = '';
+          Vynora.ui.showToast('Platform key removed.', 'info');
+          testTmdbLatency('');
         }
       };
 
-      // 5. Global Announcement
+      // Announcement
       document.getElementById('btn-save-announcement').onclick = async () => {
         const text = document.getElementById('announcement-text').value.trim();
-        await PsalmStrings.admin.saveSystemConfig({ siteAnnouncement: text });
-        PsalmStrings.ui.showToast('Global announcement updated!', 'success');
+        await Vynora.admin.saveSystemConfig({ siteAnnouncement: text });
+        Vynora.ui.showToast('Global announcement updated!', 'success');
       };
 
       document.getElementById('btn-clear-announcement').onclick = async () => {
         document.getElementById('announcement-text').value = '';
-        await PsalmStrings.admin.saveSystemConfig({ siteAnnouncement: '' });
-        PsalmStrings.ui.showToast('Announcement dismissed.', 'info');
+        await Vynora.admin.saveSystemConfig({ siteAnnouncement: '' });
+        Vynora.ui.showToast('Announcement dismissed.', 'info');
       };
 
-      // Async Helpers
-      async function loadKpis() {
-        // Users Count
-        const users = await PsalmStrings.admin.getAllUsers();
-        document.getElementById('kpi-users-count').textContent = users.length;
-
-        // Analytics
-        const analytics = await PsalmStrings.analytics.getSummary();
-        const visits = analytics?.totalVisits || 1;
-        document.getElementById('kpi-visits-count').textContent = Number(visits).toLocaleString();
-        if (analytics?.lastVisitAt?.toDate) {
-          document.getElementById('kpi-last-visit').textContent = `Last: ${analytics.lastVisitAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        }
-
-        // Comments Count
-        const comments = await PsalmStrings.admin.getRecentComments(100);
-        document.getElementById('kpi-comments-count').textContent = comments.length;
-
-        // API Ping
-        const key = PsalmStrings.tmdbApi.getApiKey();
-        if (key) {
-          const t0 = performance.now();
-          fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${key}&page=1`)
-            .then(r => {
-              const ms = Math.round(performance.now() - t0);
-              document.getElementById('kpi-api-status').textContent = 'Live (Active)';
-              document.getElementById('kpi-api-status').style.color = '#2ecc71';
-              document.getElementById('kpi-api-latency').textContent = `Latency: ${ms}ms`;
-            })
-            .catch(() => {
-              document.getElementById('kpi-api-status').textContent = 'Degraded';
-              document.getElementById('kpi-api-status').style.color = '#e74c3c';
-            });
-        } else {
-          document.getElementById('kpi-api-status').textContent = 'Curated Mode';
-          document.getElementById('kpi-api-status').style.color = 'var(--admin-gold)';
-          document.getElementById('kpi-api-latency').textContent = 'Offline fallback active';
-        }
-      }
-
-      async function loadTrafficAnalytics() {
-        const container = document.getElementById('traffic-breakdown-container');
-        const summary = await PsalmStrings.analytics.getSummary();
-        if (!summary || !summary.pages) {
-          container.innerHTML = `
-            <div style="padding: 24px; text-align: center; color: var(--text-muted);">
-              <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 12px; color: var(--admin-gold);"></i>
-              <p>Tracking initial audience impressions... Page visits will automatically render here as visitors explore the site.</p>
-            </div>
-          `;
-          return;
-        }
-
-        const total = summary.totalVisits || 1;
-        const pageNames = {
-          'index': 'Landing Page (index)',
-          'homepage': 'Movie Discovery (homepage)',
-          'movie_details': 'Movie Details Showcase',
-          'my_list': 'My Library (Favourites & Watchlist)',
-          'profile': 'User Profile & Genres',
-          'signin': 'Sign In Portal',
-          'sigup': 'Registration Page',
-          'admin': 'Admin Dashboard'
-        };
-
-        const pages = Object.entries(summary.pages).sort((a, b) => b[1] - a[1]);
-        container.innerHTML = pages.map(([key, count]) => {
-          const pct = Math.min(100, Math.round((count / total) * 100));
-          const label = pageNames[key] || key;
-          return `
-            <div class="traffic-row">
-              <span class="traffic-label">${label}</span>
-              <div class="traffic-bar-bg">
-                <div class="traffic-bar-fill" style="width: ${pct}%;"></div>
-              </div>
-              <span class="traffic-val">${count} (${pct}%)</span>
-            </div>
-          `;
-        }).join('');
-      }
-
-      async function loadAdminApiKey() {
-        const cfg = await PsalmStrings.admin.getSystemConfig();
-        if (cfg?.tmdbApiKey) {
-          keyInput.value = cfg.tmdbApiKey;
-        } else {
-          keyInput.value = PsalmStrings.tmdbApi.getApiKey();
-        }
-        if (cfg?.siteAnnouncement) {
-          document.getElementById('announcement-text').value = cfg.siteAnnouncement;
-        }
-      }
-
-      async function loadUsersDirectory() {
-        const tbody = document.getElementById('admin-users-table-body');
-        const users = await PsalmStrings.admin.getAllUsers();
-        if (!users.length) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">No users found in Firestore.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = users.map(u => {
-          const name = u.name || u.displayName || 'Cinema Fan';
-          const email = u.email || 'None';
-          const avatar = u.avatarUrl || PsalmStrings.CONFIG.DEFAULT_AVATAR;
-          const isAdmin = u.role === 'admin' || email.toLowerCase() === 'admin@psalmstrings.com';
-          return `
-            <tr>
-              <td>
-                <div style="display:flex; align-items:center; gap: 10px;">
-                  <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;" onerror="this.src='${PsalmStrings.CONFIG.DEFAULT_AVATAR}'">
-                  <strong>${name}</strong>
-                </div>
-              </td>
-              <td>${email}</td>
-              <td><span class="role-badge ${isAdmin ? 'admin' : 'user'}">${isAdmin ? 'Admin' : 'User'}</span></td>
-              <td><code>${u.uid.substring(0, 10)}...</code></td>
-              <td>
-                ${isAdmin ? `
-                  <button type="button" class="btn-action-sm btn-demote" onclick="changeRole('${u.uid}', 'user')">Demote</button>
-                ` : `
-                  <button type="button" class="btn-action-sm btn-promote" onclick="changeRole('${u.uid}', 'admin')">Make Admin</button>
-                `}
-              </td>
-            </tr>
-          `;
-        }).join('');
-      }
-
-      window.changeRole = async (uid, role) => {
-        if (confirm(`Change this user's role to ${role}?`)) {
-          await PsalmStrings.admin.setUserRole(uid, role);
-          PsalmStrings.ui.showToast(`User role updated to ${role}`, 'success');
-          loadUsersDirectory();
-        }
-      };
-
+      // 8. Comment Moderation
       async function loadModerationComments() {
         const tbody = document.getElementById('admin-comments-table-body');
-        const comments = await PsalmStrings.admin.getRecentComments(30);
+        const comments = await Vynora.admin.getRecentComments(30);
         if (!comments.length) {
           tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">No comments found across discussions.</td></tr>`;
           return;
@@ -1101,7 +1873,7 @@
             <td><strong>Movie #${c.movieId}</strong></td>
             <td>
               <div style="display:flex; align-items:center; gap:8px;">
-                <img src="${c.userAvatar || PsalmStrings.CONFIG.DEFAULT_AVATAR}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">
+                <img src="${c.userAvatar || Vynora.CONFIG.DEFAULT_AVATAR}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">
                 <span>${c.userName || 'Anonymous'}</span>
               </div>
             </td>
@@ -1118,13 +1890,15 @@
 
       window.removeComment = async (id) => {
         if (confirm("Delete this comment permanently?")) {
-          await PsalmStrings.admin.deleteComment(id);
-          PsalmStrings.ui.showToast('Comment deleted by moderator.', 'info');
+          await Vynora.admin.deleteComment(id);
+          Vynora.ui.showToast('Comment deleted by moderator.', 'info');
           loadModerationComments();
-          loadKpis();
         }
       };
+      document.getElementById('btn-refresh-comments').onclick = loadModerationComments;
+      loadModerationComments();
 
+      // 9. Custom Movies
       async function loadCustomMovies() {
         const tbody = document.getElementById('admin-movies-table-body');
         try {
@@ -1160,10 +1934,11 @@
       window.deleteCustomMovie = async (docId) => {
         if (confirm("Delete this custom movie from the catalog?")) {
           await firebase.firestore().collection('movies').doc(docId).delete();
-          PsalmStrings.ui.showToast('Movie deleted from directory.', 'info');
+          Vynora.ui.showToast('Movie deleted from directory.', 'info');
           loadCustomMovies();
         }
       };
+      loadCustomMovies();
     });
   </script>
 </body>
