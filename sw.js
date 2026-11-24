@@ -3,9 +3,9 @@
  * High-performance offline caching, asset streaming, and background sync
  */
 
-const CACHE_NAME = 'vynora-v1.0.0';
-const DYNAMIC_CACHE = 'vynora-dynamic-v1';
-const IMAGE_CACHE = 'vynora-images-v1';
+const CACHE_NAME = 'vynora-v1.1.0';
+const DYNAMIC_CACHE = 'vynora-dynamic-v1.1';
+const IMAGE_CACHE = 'vynora-images-v1.1';
 
 const STATIC_ASSETS = [
   './',

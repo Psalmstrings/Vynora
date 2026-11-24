@@ -88,9 +88,9 @@ button {
 }
 
 .brand-logo-img {
-  height: 40px;
+  height: 38px;
   width: auto;
-  max-width: 200px;
+  max-width: 180px;
   display: block;
   object-fit: contain;
   transition: transform 0.2s ease, filter 0.2s ease;
@@ -126,7 +126,8 @@ button {
 
 @media (max-width: 576px) {
   .brand-logo-img {
-    height: 32px;
+    height: 28px;
+    max-width: 130px;
   }
   .btn-pwa-install {
     padding: 6px 10px;
@@ -1855,8 +1856,8 @@ button {
 
 @media (max-width: 380px) {
   .brand-logo-img {
-    height: 26px;
-    max-width: 105px;
+    height: 24px;
+    max-width: 110px;
   }
 
   .search-input-box {
